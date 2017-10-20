@@ -7,18 +7,20 @@ with open('config/config.json') as cfg:
     config = json.load(cfg)
 
 token = config['token']
+prefix = config['command_prefix']
 
 extensions = (
-    'cogs.general',
+    'cogs.default',
     'cogs.reddit',
     'cogs.owner',
     'cogs.discord',
-    'cogs.messagecheck'
+    'cogs.messagecheck',
+    'cogs.games'
 )
 
 
 def get_prefix(bot, message):
-    prefixes = ['!', 'l!']
+    prefixes = prefix
 
     if message.guild.id is None:
         return '!'
@@ -39,7 +41,7 @@ def main():
         print(f'Version: {discord.__version__}')
         print('-' * 20)
 
-        await lambdabot.change_presence(game=discord.Game(name="Development"))
+        await lambdabot.change_presence(game=discord.Game(name="$help"))
 
     for extension in extensions:
         try:
