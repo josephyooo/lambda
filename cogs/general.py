@@ -24,9 +24,12 @@ class General:
         await ctx.send(random.choice(("Heads", "Tails")))
 
     @commands.command(name='8ball', aliases=['eightball'])
-    async def ball(self, ctx):
+    async def ball(self, ctx, *question: str):
         ctx.trigger_typing()
-        await ctx.send(random.choice(eightballphrases))
+        if question[-1][-1] != '?':
+            await ctx.send("Is that really a question?")
+        else:
+            await ctx.send(random.choice(eightballphrases))
 
     @commands.command(name='reverse')
     async def reverse(self, ctx, *, message):
@@ -50,6 +53,7 @@ class General:
     @commands.command(name='cat')
     async def cat(self, ctx):
         filename = None
+        ctx.trigger_typing()
         async with aiohttp.ClientSession() as session:
             async with session.get('http://random.cat/meow') as r:
                 if r.status == 200:
