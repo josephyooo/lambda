@@ -1,4 +1,3 @@
-# https://discordapp.com/oauth2/authorize?client_id=366027276975865856&scope=bot&permissions=2146958591
 import json
 import discord
 from discord.ext import commands
