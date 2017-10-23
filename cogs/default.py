@@ -80,9 +80,7 @@ class General:
                             catimg.write(test)
         await ctx.send(file=discord.File(filename))
         try:
-            remove('cat.jpg')
-            remove('cat.gif')
-            remove('cat.png')
+            remove(filename)
         except Exception as e:
             print(e)
 
@@ -102,9 +100,7 @@ class General:
                             dogimg.write(test)
         await ctx.send(file=discord.File(filename))
         try:
-            remove('dog.jpg')
-            remove('dog.gif')
-            remove('dog.png')
+            remove(filename)
         except Exception as e:
             print(e)
 
