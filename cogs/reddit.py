@@ -35,7 +35,7 @@ class Reddit:
                 if r.status == 200:
                     js = await r.json()
                     titles = [listing['data']['title'] for listing in js['data']['children']][1:]
-                    links = [listing['data']['url'] for listing in js['data']['children']]
+                    links = [listing['data']['url'] for listing in js['data']['children']][1:]
                     title = random.choice(titles)
                     url = links[titles.index(title)]
                     filename = 'meme' + url[-4:]
