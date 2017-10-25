@@ -1,5 +1,9 @@
 {
-    "command_prefix": "!",
-    "bot_name": "lambdabot",
-    "token": "TOKEN"
+  "command_prefix": [
+    "$"
+  ],
+  "bot_name": "lambdabot",
+  "token": "MzY2MDI3Mjc2OTc1ODY1ODU2.DLm4-w.yL7m1njrNDN2osH9dTl5Buz5fnE",
+  "reddit_user": "prawaccount",
+  "reddit_password": "prawaccountpassword"
 }
