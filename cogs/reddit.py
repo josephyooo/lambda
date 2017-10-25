@@ -3,10 +3,17 @@ from discord.ext import commands
 import aiohttp
 import random
 from os import remove
+import json
+
+with open('config/config.json') as cfg:
+    config = json.load(cfg)
+
+reddit_user = config['reddit_user']
+reddit_password = config['reddit_password']
 
 user_pass_dict = {
-    'user': 'USERNAME',
-    'password': 'PASSWORD',
+    'user': reddit_user,
+    'password': reddit_password,
     'api_type': 'json'
 }
 
@@ -39,16 +46,18 @@ class Reddit:
                     title = random.choice(titles)
                     url = links[titles.index(title)]
                     filename = 'meme' + url[-4:]
-                    async with session.get(url) as r2:
-                        image = await r2.read()
-                        with open(filename, 'wb') as imgfile:
-                            imgfile.write(image)
-                    await ctx.send(title)
-                    await ctx.send(file=discord.File(filename))
-                    try:
-                        remove(filename)
-                    except Exception as e:
-                        print(e)
+                    if url[-4] == '.png' or '.jpg' or '.gif':
+                        async with session.get(url) as r2:
+                            image = await r2.read()
+                            with open(filename, 'wb') as imgfile:
+                                imgfile.write(image)
+                        await ctx.send(title, file=discord.File(filename))
+                        try:
+                            remove(filename)
+                        except Exception as e:
+                            print(e)
+                    else:
+                        await ctx.send('Invalid url. This will be fixed soon')
                 else:
                     await ctx.send(f"**ERROR**: Status == {r.status}")
 
