@@ -107,11 +107,13 @@ class General:
                 else:
                     await ctx.send(f"**ERROR**: Status == {r.status}")
 
-    @commands.command(name='google', aliases=['g'], hidden=True,
-                      description="A command that will return a google query of what is inputted.")
-    async def google(self, ctx, *query: str):
-        # google <message>
-        pass
+    @commands.command(name='lmgtfy',
+                      description="A description that creates an lmgtfy link for you.")
+    async def lmgtfy(self, ctx, *, request: str):
+        # lmgtfy <request>
+        await ctx.send(request)
+        request = request.replace(' ', '+')
+        await ctx.send('https://lmgtfy.com/?q=' + request)
 
 
 def setup(lambdabot):
