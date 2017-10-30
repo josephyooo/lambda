@@ -29,24 +29,27 @@ class Reddit:
             async with session.get('https://www.reddit.com/r/showerthoughts/new/.json?limit=50') as r:
                 if r.status == 200:
                     js = await r.json()
-                    titles = [listing['data']['title'] for listing in js['data']['children']][1:]
+                    titles = [listing['data']['title']
+                              for listing in js['data']['children']][1:]
                     await ctx.send(random.choice(titles))
                 else:
                     await ctx.send(f'**ERROR**: Status == {r.status}')
 
-    @commands.command(name='meme',
-                      description="A command that will send a random new post from r/dankmemes.")
+    @commands.command(name='meme', aliases=["memes"],
+                      description="A command that will send a random post from r/dankmemes.")
     async def meme(self, ctx):
         async with aiohttp.ClientSession() as session:
             async with session.get('https://www.reddit.com/r/dankmemes/.json?limit=50') as r:
                 if r.status == 200:
                     js = await r.json()
-                    titles = [listing['data']['title'] for listing in js['data']['children']][1:]
-                    links = [listing['data']['url'] for listing in js['data']['children']][1:]
+                    titles = [listing['data']['title']
+                              for listing in js['data']['children']][1:]
+                    links = [listing['data']['url']
+                             for listing in js['data']['children']][1:]
                     title = random.choice(titles)
                     url = links[titles.index(title)]
                     filename = 'meme' + url[-4:]
-                    if url[-4] == '.png' or '.jpg' or '.gif':
+                    if url[-4:] == '.png' or url[-4:] == '.jpg' or url[-4:] == '.gif':
                         async with session.get(url) as r2:
                             image = await r2.read()
                             with open(filename, 'wb') as imgfile:
@@ -57,7 +60,36 @@ class Reddit:
                         except Exception as e:
                             print(e)
                     else:
-                        await ctx.send('Invalid url. This will be fixed soon')
+                        await ctx.send(title + '\n' + url)
+                else:
+                    await ctx.send(f"**ERROR**: Status == {r.status}")
+
+    @commands.command(name='boottoobig',
+                      description="A command that will send a random post from r/boottoobig")
+    async def boottoobig(self, ctx):
+        async with aiohttp.ClientSession() as session:
+            async with session.get('https://reddit.com/r/boottoobig/.json?limit=50') as r:
+                if r.status == 200:
+                    js = await r.json()
+                    titles = [listing['data']['title']
+                              for listing in js['data']['children']][1:]
+                    links = [listing['data']['url']
+                             for listing in js['data']['children']][1:]
+                    title = random.choice(titles)
+                    url = links[titles.index(title)]
+                    filename = 'boottoobig' + url[-4:]
+                    if url[-4:] == '.png' or url[-4:] == '.jpg' or url[-4:] == '.gif':
+                        async with session.get(url) as r2:
+                            image = await r2.read()
+                            with open(filename, 'wb') as imgfile:
+                                imgfile.write(image)
+                        await ctx.send(title, file=discord.File(filename))
+                        try:
+                            remove(filename)
+                        except Exception as e:
+                            print(e)
+                    else:
+                        await ctx.send(title + '\n' + url)
                 else:
                     await ctx.send(f"**ERROR**: Status == {r.status}")
 
