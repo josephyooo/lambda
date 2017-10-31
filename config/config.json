@@ -1,0 +1,9 @@
+{
+  "command_prefix": [
+    "YOURCOMMANDPREFIX"
+  ],
+  "bot_name": "lambdabot",
+  "token": "YOURTOKEN",
+  "reddit_user": "REDDITUSERNAME",
+  "reddit_password": "REDDITPASSWORD"
+}
