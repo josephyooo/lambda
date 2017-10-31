@@ -17,8 +17,8 @@ class Games:
                 if upto.content == 'quit':
                     return
                 if int(upto.content) < 3:
-                    ctx.send("That's too low, please use a number above 3.")
-                    play()
+                    await ctx.send("That's too low, please use a number above 3.")
+                    await play()
                 answer = randint(1, int(upto.content))
                 await ctx.send(f"Alright! You have **5** tries to guess a number between 1 and {int(upto.content)}")
                 guess = await self.lamdabot.wait_for('message', check=lambda message: message.author == ctx.author)
@@ -54,9 +54,10 @@ class Games:
             response = response.content.lower()
 
             if response == 'yes':
-                ctx.send("Alright! Starting a new game!")
+                await ctx.send("Alright! Starting a new game!")
+                await play()
             elif response == 'no':
-                ctx.send("Alright! Thanks for playing!")
+                await ctx.send("Alright! Thanks for playing!")
             else:
                 await ctx.send("Not a choice, **Yes** / **No**")
                 await gameover()
