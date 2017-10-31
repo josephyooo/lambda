@@ -132,7 +132,7 @@ class General:
 
     @commands.command(name='choose', aliases=['choosebetween', 'cb'],
                       description="A command that will choose between multiple choices using && to denote multiple choices")
-    async def choose(self, ctx, choices: str=''):
+    async def choose(self, ctx, *, choices: str=''):
         if choices:
             choices = choices.split('&&')
             await ctx.send(random.choice(choices))
