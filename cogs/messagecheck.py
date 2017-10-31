@@ -5,6 +5,9 @@ import random
 with open('config/phrases.json') as phrases:
     phrases = json.load(phrases)
 
+# with open('config/markov_models.json') as models:
+#     models = json.load(models)
+
 curses = phrases['curses']
 cursephrases = phrases['cursephrases']
 
@@ -14,15 +17,15 @@ class Messagecheck:
         self.lambdabot = lambdabot
 
     async def on_message(self, message):
-        sender = str(message.author)
-        messagecon = message.content
-        text = messagecon.split(" ")
-        for word in text:
-            if word.lower() in curses:
-                if message.author.id == 366027276975865856:
-                    await message.channel.send("Stop trying to trick me!")
-                else:
+        if not message.author.bot:
+            sender = str(message.author)
+            messagecon = message.content
+            text = messagecon.split(" ")
+            for word in text:
+                if word.lower() in curses:
                     await message.channel.send(random.choice(cursephrases).format(sender[:-5]))
+            # model = models[str(sender.id)]
+            # model += messagecon
 
 
 def setup(lambdabot):
