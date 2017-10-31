@@ -4,7 +4,8 @@ import random
 import json
 import aiohttp
 from os import remove
-import urllib
+import time
+from datetime import timedelta
 
 with open('config/phrases.json') as phr:
     phrases = json.load(phr)
@@ -15,6 +16,7 @@ eightballphrases = phrases['8ballphrases']
 class General:
     def __init__(self, lambdabot):
         self.lambdabot = lambdabot
+        self.stopwatches = {}
 
     @commands.command(name='ping',
                       description="A command that will send the bot's latency.")
@@ -114,6 +116,19 @@ class General:
         await ctx.send(request)
         request = request.replace(' ', '+')
         await ctx.send('https://lmgtfy.com/?q=' + request)
+
+    @commands.command(name='stopwatch', aliases=['sw'],
+                      description="A command that will return time elapsed between the first call and the second")
+    async def stopwatch(self, ctx):
+        author = ctx.message.author
+        if not author.id in self.stopwatches:
+            self.stopwatches[author.id] = int(time.perf_counter())
+            await ctx.send('Stopwatch started!')
+        else:
+            time_elapsed = abs(self.stopwatches[author.id] - int(time.perf_counter()))
+            time_elapsed = str(timedelta(seconds=time_elapsed))
+            await ctx.send(f'Stopwatch stopped! {time_elapsed} seconds have passed.')
+            self.stopwatches.pop(author.id)
 
 
 def setup(lambdabot):
