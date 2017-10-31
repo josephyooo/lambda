@@ -121,7 +121,7 @@ class General:
                       description="A command that will return time elapsed between the first call and the second")
     async def stopwatch(self, ctx):
         author = ctx.message.author
-        if not author.id in self.stopwatches:
+        if author.id not in self.stopwatches:
             self.stopwatches[author.id] = int(time.perf_counter())
             await ctx.send('Stopwatch started!')
         else:
@@ -129,6 +129,13 @@ class General:
             time_elapsed = str(timedelta(seconds=time_elapsed))
             await ctx.send(f'Stopwatch stopped! {time_elapsed} seconds have passed.')
             self.stopwatches.pop(author.id)
+
+    @commands.command(name='choose', aliases=['choosebetween', 'cb'],
+                      description="A command that will choose between multiple choices using && to denote multiple choices")
+    async def choose(self, ctx, choices: str=''):
+        if choices:
+            choices = choices.split('&&')
+            await ctx.send(random.choice(choices))
 
 
 def setup(lambdabot):
