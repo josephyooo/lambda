@@ -137,6 +137,14 @@ class General:
             choices = choices.split('&&')
             await ctx.send(random.choice(choices))
 
+    @commands.command(name='roll',
+                      description="A command that will generate a random number between 1 and user choice. Defaults to 100")
+    async def roll(self, ctx, upTo: int=100):
+        if upTo > 1:
+            await ctx.send("You rolled a " + str(random.randint(1, upTo)))
+        else:
+            await ctx.send("Really? How about a number larger than one?")
+
 
 def setup(lambdabot):
     lambdabot.add_cog(General(lambdabot))
