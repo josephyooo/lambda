@@ -113,7 +113,6 @@ class General:
                       description="A description that creates an lmgtfy link for you.")
     async def lmgtfy(self, ctx, *, request: str):
         # lmgtfy <request>
-        await ctx.send(request)
         request = request.replace(' ', '+')
         await ctx.send('https://lmgtfy.com/?q=' + request)
 
