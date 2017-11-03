@@ -119,6 +119,7 @@ class General:
     @commands.command(name='stopwatch', aliases=['sw'],
                       description="A command that will return time elapsed between the first call and the second")
     async def stopwatch(self, ctx):
+        # stopwatch
         author = ctx.message.author
         if author.id not in self.stopwatches:
             self.stopwatches[author.id] = int(time.perf_counter())
@@ -141,6 +142,7 @@ class General:
     @commands.command(name='roll',
                       description="A command that will generate a random number between 1 and user choice. Defaults to 100")
     async def roll(self, ctx, upTo: int=100):
+        # roll <upTo>
         if upTo > 1:
             await ctx.send("You rolled a " + str(random.randint(1, upTo)))
         else:
