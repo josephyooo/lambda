@@ -13,7 +13,8 @@ extensions = (
     'cogs.owner',
     'cogs.discord',
     'cogs.games',
-    'cogs.reddit'
+    'cogs.reddit',
+    'cogs.weather'
 )
 
 
