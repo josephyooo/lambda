@@ -1,4 +1,5 @@
 from discord.ext import commands
+import discord
 import pyowm
 from json import load
 
@@ -22,14 +23,23 @@ class Weather:
         weather = observation.get_weather()
         lat = observation.get_location().get_lat()
         lon = observation.get_location().get_lon()
-        temp = weather.get_temperature('celsius')['temp']
-        wind = weather.get_wind()
+        ctemp = str(weather.get_temperature('celsius')['temp']) + U'\N{DEGREE SIGN}'
+        ftemp = str(weather.get_temperature('fahrenheit')['temp']) + U'\N{DEGREE SIGN}'
+        ktemp = str(weather.get_temperature('kelvin')['temp']) + U'\N{DEGREE SIGN}'
+        wind = weather.get_wind
 
-        await ctx.send('**Latitude:** {}, **Longitude:** {}'.format(lat, lon))
-        await ctx.send('**Temperature:** {} celsius'.format(str(temp) + u'\N{DEGREE SIGN}'))
-        await ctx.send('**Humidity:** {}'.format(str(weather.get_humidity()) + '%'))
-        await ctx.send('**Wind Speed:** {} at {}'.format(str(wind['speed']) + ' m/s', str(wind['deg']) + u'\N{DEGREE SIGN}'))
-        await ctx.send('**Detailed Status:** {}'.format(weather.get_detailed_status()))
+        embed = discord.Embed(title="Weather forecast for {}, ({}, {})".format(
+            location, lat, lon), description="{} ({}% Cloud Coverage)".format(weather.get_detailed_status().title(), weather.get_clouds()), color=0x00ff80)
+        embed.add_field(name='Temperature', value='{}C | {}F | {}K'.format(
+            ctemp, ftemp, ktemp), inline=True)
+        embed.add_field(name='Humidity', value='{}%'.format(weather.get_humidity()), inline=True)
+        embed.add_field(name='Wind Speed',
+                        value='{}km/h | {}mph'.format(round((wind('meters_sec')['speed'] * 3.6)), round(wind('miles_hour')['speed'])), inline=True)
+        embed.add_field(name='Pressure', value='{}kPA'.format(
+            weather.get_pressure()['press']), inline=True)
+        embed.set_footer(text='Information provided by OpenWeatherMap')
+
+        await ctx.send(embed=embed)
 
 
 def setup(lambdabot):
