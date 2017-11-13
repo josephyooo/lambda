@@ -1,2 +1,4 @@
 config/config.json
-cogs/__pycache__/
+*.pyc
+.pydevproject
+.project
