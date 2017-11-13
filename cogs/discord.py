@@ -18,13 +18,12 @@ class Discord:
                       description="A command that will clear a specified number of messages from a channel.")
     async def clear(self, ctx, amount: int):
         # clear <amount>
-        amount += 1
-        if amount > 30:
-            await ctx.send("That's too much. Please use a number below 30")
-        else:
+        if (8192 & int(ctx.author.roles[1].permissions.value)) > 0:
+            amount += 1
             await ctx.channel.purge(limit=amount)
-            time.sleep(0.5)
-            await ctx.send(f'I have cleared {amount - 1} messages.')
+            await ctx.send(f"I have cleared {amount - 1} messages.", delete_after=10)
+        else:
+            await ctx.send(f"Sorry, but you don't have the permissions to do so, {ctx.author.mention}")
 
     @commands.command(name='id',
                       description="A command that will send the given member's id")
@@ -37,6 +36,11 @@ class Discord:
     async def owner(self, ctx):
         # owner
         await ctx.send(ctx.guild.owner.mention)
+    
+    @commands.command(name='permissions',
+                      description="A command that will send the permission value of a given member.")
+    async def permissions(self, ctx, member: discord.Member):
+        await ctx.send(f"{member}'s permission value is {member.roles[1].permissions.value}.")
 
 
 def setup(lambdabot):
