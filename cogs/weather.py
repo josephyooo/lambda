@@ -1,7 +1,7 @@
 from discord.ext import commands
 import discord
-import pyowm
 from json import load
+from pyowm import OWM
 from pyowm.exceptions.not_found_error import NotFoundError
 
 with open('config/config.json') as cfg:
@@ -19,7 +19,7 @@ class Weather:
     async def forecast(self, ctx, *, location: str=''):
         # forecast <unit> <location>
         try:
-            owm = pyowm.OWM(owm_api_key)
+            owm = OWM(owm_api_key)
     
             observation = owm.weather_at_place(location)
             weather = observation.get_weather()

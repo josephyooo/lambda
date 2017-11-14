@@ -164,9 +164,9 @@ class General:
             service = build("customsearch", "v1", developerKey=cse_api_key)
             results = service.cse().list(q=query, cx=cse_id, num=results).execute()['items']
             await ctx.send('**Search Results**')
-            embed = discord.Embed(title="Search Results", color=0x00ff80)
+            embed = discord.Embed(title="Search Results", color=0x00E9FF)
             for result in results:
-                embed.add_field(name=result['title'], value=result['link'])
+                embed.add_field(name=result['title'], value=result['link'], inline=False)
             await ctx.send(embed=embed)
 
 
