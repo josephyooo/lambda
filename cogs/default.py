@@ -1,15 +1,22 @@
 import discord
 from discord.ext import commands
 import random
-import json
-import aiohttp
+from json import load
+from aiohttp import ClientSession
 from os import remove
-import time
+from time import perf_counter
 from datetime import timedelta
+from googleapiclient.discovery import build
+from asyncio import sleep
+
+with open('config/config.json') as cfg:
+    config = load(cfg)
 
 with open('config/phrases.json') as phr:
-    phrases = json.load(phr)
+    phrases = load(phr)
 
+cse_api_key = config['cse_api_key']
+cse_id = config['cse_id']
 eightballphrases = phrases['8ballphrases']
 
 
@@ -70,7 +77,7 @@ class General:
     async def cat(self, ctx):
         # cat
         ctx.trigger_typing()
-        async with aiohttp.ClientSession() as session:
+        async with ClientSession() as session:
             async with session.get('http://random.cat/meow') as r:
                 if r.status == 200:
                     js = await r.json()
@@ -91,7 +98,7 @@ class General:
     @commands.command(name='dog', description="A command that will send a random dog photo from shibe.online")
     async def dog(self, ctx):
         # dog
-        async with aiohttp.ClientSession() as session:
+        async with ClientSession() as session:
             async with session.get('http://shibe.online/api/shibes?count=1') as r:
                 if r.status == 200:
                     js = await r.json()
@@ -122,10 +129,10 @@ class General:
         # stopwatch
         author = ctx.message.author
         if author.id not in self.stopwatches:
-            self.stopwatches[author.id] = int(time.perf_counter())
+            self.stopwatches[author.id] = int(perf_counter())
             await ctx.send('Stopwatch started!')
         else:
-            time_elapsed = abs(self.stopwatches[author.id] - int(time.perf_counter()))
+            time_elapsed = abs(self.stopwatches[author.id] - int(perf_counter()))
             time_elapsed = str(timedelta(seconds=time_elapsed))
             await ctx.send(f'Stopwatch stopped! {time_elapsed} seconds have passed.')
             self.stopwatches.pop(author.id)
@@ -147,6 +154,20 @@ class General:
             await ctx.send("You rolled a " + str(random.randint(1, upTo)))
         else:
             await ctx.send("Really? How about a number larger than one?")
+    
+    @commands.command(name='google', aliases=['g'],
+                      description="A command that will send a specified amount of search results from google.")
+    async def google(self, ctx, *, query: str, results: int=5):
+        if results > 20:
+           await ctx.send("Less than 30 results please.") 
+        else:
+            service = build("customsearch", "v1", developerKey=cse_api_key)
+            results = service.cse().list(q=query, cx=cse_id, num=results).execute()['items']
+            await ctx.send('**Search Results**')
+            embed = discord.Embed(title="Search Results", color=0x00ff80)
+            for result in results:
+                embed.add_field(name=result['title'], value=result['link'])
+            await ctx.send(embed=embed)
 
 
 def setup(lambdabot):
