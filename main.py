@@ -14,7 +14,8 @@ extensions = (
     'cogs.discord',
     'cogs.games',
     'cogs.reddit',
-    'cogs.weather'
+    'cogs.weather',
+    'cogs.gamestats'
 )
 
 
