@@ -4,6 +4,7 @@ import time
 
 
 class Discord:
+
     def __init__(self, lambdabot):
         self.lambdabot = lambdabot
 

@@ -31,6 +31,7 @@ lambdabot = commands.Bot(command_prefix=get_prefix)
 
 
 def main():
+
     # Runs when the bot starts up. Right now, it's going to print the username,
     # userid, number of servers it's on, and number of user it's connected to
     @lambdabot.event

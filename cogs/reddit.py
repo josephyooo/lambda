@@ -19,6 +19,7 @@ user_pass_dict = {
 
 
 class Reddit:
+
     def __init__(self, lambdabot):
         self.lambdabot = lambdabot
 
