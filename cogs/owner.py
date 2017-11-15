@@ -9,7 +9,6 @@ class Owner:
                       description="A command that will load a certain cog extension.")
     @commands.is_owner()
     async def cog_load(self, ctx, *, cog: str):
-        # load <cog>
         try:
             self.lambdabot.load_extension(cog)
         except Exception as e:
@@ -21,7 +20,6 @@ class Owner:
                       description="A command that will unload a certain cog extension.")
     @commands.is_owner()
     async def cog_unload(self, ctx, *, cog: str):
-        # unload <cog>
         try:
             self.lambdabot.unload_extension(cog)
         except Exception as e:
@@ -32,7 +30,6 @@ class Owner:
     @commands.command(name='reload', hidden=True,
                       description="A command that will reload a certain cog extension.")
     async def cog_reload(self, ctx, *, cog: str):
-        # reload <cog>
         try:
             self.lambdabot.unload_extension(cog)
             self.lambdabot.load_extension(cog)

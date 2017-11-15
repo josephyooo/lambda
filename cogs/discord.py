@@ -10,14 +10,12 @@ class Discord:
     @commands.command(name='joined', aliases=['joinedat'],
                       description="A command that will send the date that a certain member has joined.")
     async def joined(self, ctx, member: discord.Member):
-        # joined <member>
         date = member.joined_at.strftime('%B %d, %Y')
         await ctx.send(f'"{member.name}" joined this server on {date}.')
 
     @commands.command(name='clear',
                       description="A command that will clear a specified number of messages from a channel.")
     async def clear(self, ctx, amount: int):
-        # clear <amount>
         if (8192 & int(ctx.author.roles[1].permissions.value)) > 0:
             amount += 1
             await ctx.channel.purge(limit=amount)
@@ -28,13 +26,11 @@ class Discord:
     @commands.command(name='id',
                       description="A command that will send the given member's id")
     async def id(self, ctx, *, member: discord.Member):
-        # id <member>
         await ctx.send(f"{member.name}'s id is <{member.id}>")
 
     @commands.command(name='owner',
                       description="A command that will send the guild's owner.")
     async def owner(self, ctx):
-        # owner
         await ctx.send(ctx.guild.owner.mention)
     
     @commands.command(name='permissions',
