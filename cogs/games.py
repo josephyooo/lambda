@@ -46,8 +46,7 @@ class Games:
                         await ctx.send(f"Nice! It took you **{attempts}** tries to get it right!")
                     await gameover()
             except ValueError:
-                await ctx.send("Please return a number.")
-                await play()
+                await ctx.send("Please return a number.\nEnding game...")
 
         async def gameover():
             await ctx.send("Would you like to play another game? **Yes** / **No**")
@@ -93,8 +92,7 @@ class Games:
                     await ctx.send(f"**You lost!** Lambda chose **{bot_choice.title()}** and you chose **{player_choice.title()}**!")
                     await gameover()
             else:
-                await ctx.send("Please choose **Rock, Paper, or Scissors**.")
-                await play()
+                await ctx.send("Please choose **Rock, Paper, or Scissors**.\nEnding game...")
 
         async def gameover():
             await ctx.send("Would you like to play again? **Yes** / **No**")
