@@ -133,11 +133,14 @@ class General:
     @commands.command(name='choose', aliases=['choosebetween', 'cb'],
                       description="A command that will choose between multiple choices using && to denote multiple choices")
     async def choose(self, ctx, *, choices: str=''):
-        if choices > 1:
-            choices = choices.split('&&')
+        if not choices:
+            await ctx.send("What's the point?")
+            return
+        choices = choices.split('&&')
+        if len(choices) > 1:
             await ctx.send(random.choice(choices))
         else:
-            await ctx.send("Not enough choices. Give me at least")
+            await ctx.send("Not enough choices. Give me at least 2 choices to pick from.")
 
     @commands.command(name='roll',
                       description="A command that will generate a random number between 1 and user choice. Defaults to 100")
