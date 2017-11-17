@@ -8,6 +8,8 @@ from time import perf_counter
 from datetime import timedelta
 from googleapiclient.discovery import build
 from asyncio import sleep
+from requests import get
+from urllib.parse import quote
 
 with open('config/config.json') as cfg:
     config = load(cfg)
@@ -147,17 +149,50 @@ class General:
     
     @commands.command(name='google', aliases=['g'],
                       description="A command that will send a specified amount of search results from google.")
-    async def google(self, ctx, *, query: str, results: int=5):
+    async def google(self, ctx, results: str, *, query: str=''):
+        try:
+            results = int(results)
+        except ValueError:
+            await ctx.send("How many results do you want? ($google ***<results>*** <query>)")
+            return
         if results > 20:
-           await ctx.send("Less than 30 results please.") 
-        else:
+           await ctx.send("Less than 20 results please.") 
+           return
+        elif query:
             service = build("customsearch", "v1", developerKey=cse_api_key)
             results = service.cse().list(q=query, cx=cse_id, num=results).execute()['items']
-            await ctx.send('**Search Results**')
             embed = discord.Embed(title="Search Results", color=0x00E9FF)
             for result in results:
                 embed.add_field(name=result['title'], value=result['link'], inline=False)
             await ctx.send(embed=embed)
+        else:
+            await ctx.send("What do you want me to search for you?")
+    
+    @commands.command(name='urbandictionary', aliases=['ub'],
+                      description="A command that will send a search result of the given request in urban dictionary.")
+    async def urbandictionary(self, ctx, results: str, *, query: str=''):
+        try:
+            results = int(results)
+            if results < 1:
+                await ctx.send("What's the point of getting no results back?")
+        except ValueError:
+            await ctx.send("How many results do you want? ($urbandictionary ***<results>*** <query>)")
+            return
+        if results > 20:
+            await ctx.send("Less than 20 results please.")
+            return
+        elif query:
+            resp = get('https://api.urbandictionary.com/v0/define?term=' + quote(query)).json()['list']
+            embed = discord.Embed(title="Search Results", color=0x0000ff)
+            if results > len(resp):
+                for item in resp:
+                    embed.add_field(name=f"Result #{str(resp.index(item) + 1)}", value=item['definition'], inline=False)
+            else:
+                for item in resp[0:results]:
+                    embed.add_field(name=f"Result #{str(resp.index(item) + 1)}", value=item['definition'], inline=False)
+            await ctx.send(embed=embed)
+        else:
+            await ctx.send("Try giving me something to search.")
 
 
 def setup(lambdabot):
