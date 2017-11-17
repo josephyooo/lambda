@@ -185,15 +185,17 @@ class General:
             await ctx.send("Less than 20 results please.")
             return
         elif query:
-            resp = get('https://api.urbandictionary.com/v0/define?term=' + quote(query)).json()['list']
-            embed = discord.Embed(title="Search Results", color=0x0000ff)
-            if results > len(resp):
-                for item in resp:
-                    embed.add_field(name=f"Result #{str(resp.index(item) + 1)}", value=item['definition'], inline=False)
-            else:
-                for item in resp[0:results]:
-                    embed.add_field(name=f"Result #{str(resp.index(item) + 1)}", value=item['definition'], inline=False)
-            await ctx.send(embed=embed)
+            async with ClientSession() as session:
+                async with session.get(f'https://api.urbandictionary.com/v0/define?term={quote(query)}') as r:
+                    if r.status == 200:
+                        json = await r.json()
+                        definitions = json['list']
+                        embed = discord.Embed(title="Search Results", color=0x0000ff)
+                        for item in definitions[0:results]:
+                            embed.add_field(name=f"Result #{str(definitions.index(item) + 1)}", value=item['definition'], inline=False)
+                        await ctx.send(embed=embed)
+                    else:
+                        await ctx.send(f"**ERROR**: Status == {r.status}")
         else:
             await ctx.send("Try giving me something to search.")
 
