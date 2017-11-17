@@ -8,7 +8,6 @@ from time import perf_counter
 from datetime import timedelta
 from googleapiclient.discovery import build
 from asyncio import sleep
-from requests import get
 from urllib.parse import quote
 
 with open('config/config.json') as cfg:
