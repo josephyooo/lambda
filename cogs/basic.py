@@ -212,7 +212,7 @@ class Basic:
 
     @commands.command(name='texttobinary', aliases=['binaryfromtext', 'ttb', 'bft'],
                       description="Translates text into binary")
-    async def testtobinary(self, ctx, *, text):
+    async def texttobinary(self, ctx, *, text):
         if text:
             bits = bin(int.from_bytes(text.encode('utf-8', 'surrogatepass'), 'big'))[2:]
             bits = bits.zfill(8 * ((len(bits) + 7) // 8))
