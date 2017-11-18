@@ -25,5 +25,6 @@ If you want to use it, use your own [discord bot token](https://discordapp.com/d
 
 You can install the requirements by running:
 ```
-$ pip install -r requirements.txt
+pip install -r requirements.txt
 ```
+In the terminal while in the directory
