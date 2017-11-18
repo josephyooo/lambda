@@ -5,6 +5,7 @@ import time
 
 class Discord:
 
+    # Commands that have to do with discord
     def __init__(self, lambdabot):
         self.lambdabot = lambdabot
 

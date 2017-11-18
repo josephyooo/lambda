@@ -11,12 +11,13 @@ steam_api_key = config['steam_api_key']
 
 class Gamestats:
 
+    # Commands that retrieve gamestats
     def __init__(self, lambdabot):
         self.lambdabot = lambdabot
     
     @commands.command('csgostats', aliases=['csgo'],
                       description="A command that will send the given user's kills, deaths, time played, etc.")
-    async def csgostats(self, ctx, id: str):
+    async def csgostats(self, ctx, id: str=''):
         if id:
             isid = False
             for part in id.split('/'):
@@ -36,7 +37,7 @@ class Gamestats:
                         await ctx.send("**{}** does not own csgo".format(player_summary['personaname']))
                         return
                     except:
-                        await ctx.send("That id does not exist")
+                        await ctx.send("That steam id does not exist")
                         return
                 obtained_stats = {'total_kills': 0, 'total_deaths': 0, 'total_time_played': 0, 'total_shots_hit': 0, 'total_shots_fired': 0, 'total_mvps': 0}
                 wanted_stats = ['total_kills', 'total_deaths', 'total_time_played', 'total_shots_hit', 'total_shots_fired', 'total_mvps']
@@ -57,9 +58,9 @@ class Gamestats:
                 embed.add_field(name='Accuracy Rate', value='{}% of fired bullets hit'.format(round(obtained_stats['total_shots_hit'] / obtained_stats['total_shots_fired'], 3) * 100))
                 await ctx.send(embed=embed)
             else:
-                await ctx.send("That is not a valid id.")
+                await ctx.send("That is not a valid steam id.")
         else:
-            await ctx.send("Try entering a user id.")
+            await ctx.send("Try entering a steam user id.")
 
 
 def setup(lambdabot):

@@ -11,6 +11,7 @@ cursephrases = phrases['cursephrases']
 
 class Messagecheck:
 
+    # Checks messages
     def __init__(self, lambdabot):
         self.lambdabot = lambdabot
 

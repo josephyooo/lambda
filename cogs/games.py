@@ -4,6 +4,7 @@ from random import randint
 
 class Games:
 
+    # Game commands
     def __init__(self, lambdabot):
         self.lamdabot = lambdabot
 

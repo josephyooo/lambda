@@ -20,6 +20,7 @@ user_pass_dict = {
 
 class Reddit:
 
+    # Commands that get stuff from reddit
     def __init__(self, lambdabot):
         self.lambdabot = lambdabot
 

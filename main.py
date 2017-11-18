@@ -9,7 +9,7 @@ token = config['token']
 prefix = config['command_prefix']
 
 extensions = (
-    'cogs.default',
+    'cogs.basic',
     'cogs.owner',
     'cogs.discord',
     'cogs.games',

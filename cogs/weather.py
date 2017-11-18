@@ -11,6 +11,8 @@ owm_api_key = config['owm_api_key']
 
 
 class Weather:
+
+    # Command that gets weather using OpenWeatherMap
     def __init__(self, lambdabot):
         self.lambdabot = lambdabot
 
@@ -33,7 +35,7 @@ class Weather:
             embed = discord.Embed(title="Weather forecast for {}, ({}, {})".format(location, lat, lon), description="{} ({}% Cloud Coverage)".format(weather.get_detailed_status().title(), weather.get_clouds()), color=0x00ff80)
             embed.add_field(name='Temperature', value='{}C | {}F | {}K'.format(ctemp, ftemp, ktemp))
             embed.add_field(name='Humidity', value='{}%'.format(weather.get_humidity()))
-            embed.add_field(name='Wind Speed',value='{}km/h | {}mph at {}'.format(round((wind('meters_sec')['speed'] * 3.6)), round(wind('miles_hour')['speed']), str(round(wind()['deg'])) + U'\N{DEGREE SIGN}'))
+            embed.add_field(name='Wind Speed', value='{}km/h | {}mph at {}'.format(round((wind('meters_sec')['speed'] * 3.6)), round(wind('miles_hour')['speed']), str(round(wind()['deg'])) + U'\N{DEGREE SIGN}'))
             embed.add_field(name='Pressure', value='{}kPA'.format(weather.get_pressure()['press']))
             embed.set_footer(text='Information provided by OpenWeatherMap')
     

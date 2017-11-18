@@ -3,6 +3,7 @@ from discord.ext import commands
 
 class Owner:
 
+    # Commands that only the person running the bot can run
     def __init__(self, lambdabot):
         self.lambdabot = lambdabot
 

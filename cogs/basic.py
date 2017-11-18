@@ -9,6 +9,7 @@ from datetime import timedelta
 from googleapiclient.discovery import build
 from asyncio import sleep
 from urllib.parse import quote
+from bs4 import BeautifulSoup
 
 with open('config/config.json') as cfg:
     config = load(cfg)
@@ -21,8 +22,9 @@ cse_id = config['cse_id']
 eightballphrases = phrases['8ballphrases']
 
 
-class General:
+class Basic:
 
+    # Basic Commands
     def __init__(self, lambdabot):
         self.lambdabot = lambdabot
         self.stopwatches = {}
@@ -197,7 +199,41 @@ class General:
                         await ctx.send(f"**ERROR**: Status == {r.status}")
         else:
             await ctx.send("Try giving me something to search.")
+    
+    @commands.command(name='fact', aliases=['randomfact'],
+                      description="Sends a random fact")
+    async def fact(self, ctx):
+        async with ClientSession() as session:
+            async with session.get('http://unkno.com/') as r:
+                soup = BeautifulSoup(await r.text(), "html.parser")
+                facts = soup.find('div', attrs={'id': 'content'})
+                for fact in facts:
+                    await ctx.send(fact)
+
+    @commands.command(name='texttobinary', aliases=['binaryfromtext', 'ttb', 'bft'],
+                      description="Translates text into binary")
+    async def testtobinary(self, ctx, *, text):
+        if text:
+            bits = bin(int.from_bytes(text.encode('utf-8', 'surrogatepass'), 'big'))[2:]
+            bits = bits.zfill(8 * ((len(bits) + 7) // 8))
+            result = ''
+            for n in range(len(bits) // 8):
+                result += bits[:8] + ' '
+                bits = bits[8:]
+            await ctx.send(result)
+        else:
+            await ctx.send("What do you want me to translate?")
+
+    @commands.command(name='binarytotext', aliases=['textfrombinary', 'btt', 'tfb'])
+    async def binarytotext(self, ctx, *, binary):
+            binary = ''.join(binary.split())
+            try:
+                n = int(binary, 2)
+            except ValueError:
+                await ctx.send("I need binary, not text")
+                return
+            await ctx.send(n.to_bytes((n.bit_length() + 7) // 8, 'big').decode('utf-8', 'surrogatepass') or '\0')
 
 
 def setup(lambdabot):
-    lambdabot.add_cog(General(lambdabot))
+    lambdabot.add_cog(Basic(lambdabot))
