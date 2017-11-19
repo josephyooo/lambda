@@ -38,6 +38,7 @@ def main():
     @lambdabot.event
     async def on_ready():
         print(f'\nLogged in as {lambdabot.user.name} (ID: {lambdabot.user.id})')
+        print(f'Connected to {len(lambdabot.guilds)} servers')
         print(f'Connected to {str(len(set(lambdabot.get_all_members())))} users')
         print(f'Version: {discord.__version__}')
         print('-' * 20)
