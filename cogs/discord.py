@@ -38,7 +38,7 @@ class Discord:
     @commands.command(name='permissions',
                       description="A command that will send the permission value of a given member.")
     async def permissions(self, ctx, member: discord.Member):
-        await ctx.send(f"{member}'s permission value is {member.roles[1].permissions.value}.")
+        await ctx.send(f"{str(member)[:-5]}'s permission value is {member.roles[1].permissions.value}.\nhttps://discordapi.com/permissions.html#{member.roles[1].permissions.value}")
 
 
 def setup(lambdabot):

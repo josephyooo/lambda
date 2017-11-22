@@ -159,8 +159,8 @@ class Basic:
         except ValueError:
             await ctx.send("How many results do you want? ($google ***<results>*** <query>)")
             return
-        if results > 20:
-           await ctx.send("Less than 20 results please.") 
+        if results > 10:
+           await ctx.send("Less than 10 results please.") 
            return
         elif query:
             service = build("customsearch", "v1", developerKey=cse_api_key)
