@@ -10,8 +10,7 @@ prefix = config['command_prefix']
 
 extensions = (
     'cogs.basic',
-    'cogs.owner',
-    'cogs.discord',
+    'cogs.meta',
     'cogs.games',
     'cogs.reddit',
     'cogs.weather',
