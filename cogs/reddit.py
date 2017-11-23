@@ -3,10 +3,10 @@ from discord.ext import commands
 import aiohttp
 import random
 from os import remove
-import json
+from json import load
 
 with open('config/config.json') as cfg:
-    config = json.load(cfg)
+    config = load(cfg)
 
 reddit_user = config['reddit_user']
 reddit_password = config['reddit_password']
@@ -19,6 +19,8 @@ user_pass_dict = {
 
 
 class Reddit:
+
+    # Commands that get stuff from reddit
     def __init__(self, lambdabot):
         self.lambdabot = lambdabot
 

@@ -9,12 +9,12 @@ token = config['token']
 prefix = config['command_prefix']
 
 extensions = (
-    'cogs.default',
-    'cogs.owner',
-    'cogs.discord',
+    'cogs.basic',
+    'cogs.meta',
     'cogs.games',
     'cogs.reddit',
-    'cogs.weather'
+    'cogs.weather',
+    'cogs.gamestats'
 )
 
 
@@ -31,11 +31,13 @@ lambdabot = commands.Bot(command_prefix=get_prefix)
 
 
 def main():
+
     # Runs when the bot starts up. Right now, it's going to print the username,
     # userid, number of servers it's on, and number of user it's connected to
     @lambdabot.event
     async def on_ready():
         print(f'\nLogged in as {lambdabot.user.name} (ID: {lambdabot.user.id})')
+        print(f'Connected to {len(lambdabot.guilds)} servers')
         print(f'Connected to {str(len(set(lambdabot.get_all_members())))} users')
         print(f'Version: {discord.__version__}')
         print('-' * 20)

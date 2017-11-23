@@ -3,13 +3,15 @@ from random import randint
 
 
 class Games:
+
+    # Game commands
     def __init__(self, lambdabot):
         self.lamdabot = lambdabot
 
     @commands.command(name="guess", aliases=["guessinggame", "guessing_game"],
                       description="A command that will play a guessing game with the author of the command.")
     async def guess(self, ctx):
-        # guess
+
         async def play():
             try:
                 await ctx.send("Let's play the guessing game! What number would you like to guess to?")
@@ -45,8 +47,7 @@ class Games:
                         await ctx.send(f"Nice! It took you **{attempts}** tries to get it right!")
                     await gameover()
             except ValueError:
-                await ctx.send("Please return a number.")
-                await play()
+                await ctx.send("Please return a number.\nEnding game...")
 
         async def gameover():
             await ctx.send("Would you like to play another game? **Yes** / **No**")
@@ -67,7 +68,7 @@ class Games:
     @commands.command(name="rps", aliases=["rockpaperscissors", "rock_paper_scissors"],
                       description="A command that will play a game of rps with the author of the command.")
     async def rps(self, ctx):
-        # rps
+
         async def play():
             await ctx.send("Let's play **RPS**! Choose your weapon of choice.")
             choices = ('rock', 'paper', 'scissors')
@@ -92,8 +93,7 @@ class Games:
                     await ctx.send(f"**You lost!** Lambda chose **{bot_choice.title()}** and you chose **{player_choice.title()}**!")
                     await gameover()
             else:
-                await ctx.send("Please choose **Rock, Paper, or Scissors**.")
-                await play()
+                await ctx.send("Please choose **Rock, Paper, or Scissors**.\nEnding game...")
 
         async def gameover():
             await ctx.send("Would you like to play again? **Yes** / **No**")
