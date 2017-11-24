@@ -28,7 +28,7 @@ class Reddit:
                       description="A command that will return a random post from the given subreddit.")
     async def reddit(self, ctx, subreddit: str='', sort: str='new', limit: int=50):
         if str:
-            async with aiohttp.ClientSession() as session:
+            async with aiohttp.ClientSession(headers={'User-agent': 'discordlambdbabotredditgetter'}) as session:
                 subreddit_link = (f'https://www.reddit/com/r/{subreddit}/{sort}/.json?limit={limit}')
                 async with session.get(subreddit_link) as r:
                     if r.status == 200:

@@ -13,7 +13,8 @@ class Meta:
                       description="A command that will load a certain cog extension.")
     @commands.is_owner()
     async def cog_load(self, ctx, *, cog: str):
-        cog = 'cogs.' + cog
+        if not cog[:5] == 'cogs.':
+            cog = 'cogs.' + cog
         try:
             self.lambdabot.load_extension(cog)
         except Exception as e:
@@ -25,7 +26,8 @@ class Meta:
                       description="A command that will unload a certain cog extension.")
     @commands.is_owner()
     async def cog_unload(self, ctx, *, cog: str):
-        cog = 'cogs.' + cog
+        if not cog[:5] == 'cogs.':
+            cog = 'cogs.' + cog
         try:
             self.lambdabot.unload_extension(cog)
         except Exception as e:
@@ -36,7 +38,8 @@ class Meta:
     @commands.command(name='reload', hidden=True,
                       description="A command that will reload a certain cog extension.")
     async def cog_reload(self, ctx, *, cog: str):
-        cog = 'cogs.' + cog
+        if not cog[:5] == 'cogs.':
+            cog = 'cogs.' + cog
         try:
             self.lambdabot.unload_extension(cog)
             self.lambdabot.load_extension(cog)
@@ -104,12 +107,14 @@ class Meta:
         with open('config/requests.json', 'r+') as requestsfile:
             requestsfilejson = load(requestsfile)
         if requestsfilejson.__contains__(guild_id):
-            guild = requestsfilejson[guild_id]
-            if guild.__contains__(member_id):
-                member = guild[member_id]
-                for guild in requestsfilejson:
-                    for member in guild:
-                        if idea in member:
+            requester_guild = requestsfilejson[guild_id]
+            if requester_guild.__contains__(member_id):
+                member = requester_guild[member_id]
+                for guild_key in requestsfilejson:
+                    guild = requestsfilejson[guild_key]
+                    for guild_member_key in guild:
+                        guild_member = guild[guild_member_key]
+                        if idea in guild_member:
                             await ctx.send("That request has already been filed previously.")
                             return
                 member.append(idea)
