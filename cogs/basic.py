@@ -92,18 +92,38 @@ class Basic:
                 else:
                     await ctx.send(f"**ERROR**: Status == {r.status}")
 
-    @commands.command(name='dog', description="A command that will send a random dog photo from shibe.online")
+    @commands.command(name='dog', description="A command that will send a random dog photo from random.dog")
     async def dog(self, ctx):
         async with ClientSession() as session:
-            async with session.get('http://shibe.online/api/shibes?count=1') as r:
+            async with session.get('https://random.dog/woof.json') as r:
                 if r.status == 200:
                     js = await r.json()
-                    url = js[0]
+                    url = js['url']
                     filename = 'dog' + url[-4:]
                     async with session.get(url) as r2:
                         image = await r2.read()
                         with open(filename, 'wb') as dogimg:
                             dogimg.write(image)
+                    await ctx.send(file=discord.File(filename))
+                    try:
+                        remove(filename)
+                    except Exception as e:
+                        print(e)
+                else:
+                    await ctx.send(f"**ERROR**: Status == {r.status}")
+
+    @commands.command(name='shibe', description="A command that will send a random shibe photo from shibe.online")
+    async def shibe(self, ctx):
+        async with ClientSession() as session:
+            async with session.get('http://shibe.online/api/shibes?count=1') as r:
+                if r.status == 200:
+                    js = await r.json()
+                    url = js[0]
+                    filename = 'shibe' + url[-4:]
+                    async with session.get(url) as r2:
+                        image = await r2.read()
+                        with open(filename, 'wb') as shibeimg:
+                            shibeimg.write(image)
                     await ctx.send(file=discord.File(filename))
                     try:
                         remove(filename)
