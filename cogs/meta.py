@@ -1,5 +1,6 @@
 from discord import Member
 from discord.ext import commands
+from json import load, dump
 
 
 class Meta:
@@ -12,6 +13,7 @@ class Meta:
                       description="A command that will load a certain cog extension.")
     @commands.is_owner()
     async def cog_load(self, ctx, *, cog: str):
+        cog = 'cogs.' + cog
         try:
             self.lambdabot.load_extension(cog)
         except Exception as e:
@@ -23,6 +25,7 @@ class Meta:
                       description="A command that will unload a certain cog extension.")
     @commands.is_owner()
     async def cog_unload(self, ctx, *, cog: str):
+        cog = 'cogs.' + cog
         try:
             self.lambdabot.unload_extension(cog)
         except Exception as e:
@@ -33,6 +36,7 @@ class Meta:
     @commands.command(name='reload', hidden=True,
                       description="A command that will reload a certain cog extension.")
     async def cog_reload(self, ctx, *, cog: str):
+        cog = 'cogs.' + cog
         try:
             self.lambdabot.unload_extension(cog)
             self.lambdabot.load_extension(cog)
@@ -51,8 +55,8 @@ class Meta:
     @commands.command(name='test', hidden=True,
                       description="A test command for my creator's testing needs.")
     @commands.is_owner()
-    async def test(self, ctx, content: str):
-        await ctx.send(content)
+    async def test(self, ctx):
+        await ctx.send(type(ctx.guild.id))
 
     @commands.command(name='joined', aliases=['joinedat'],
                       description="A command that will send the date that a certain member has joined.")
@@ -89,6 +93,34 @@ class Meta:
                       description="A command that send a brief description of the bot.")
     async def about(self, ctx):
         await ctx.send("***lambda bot*** was created by ***<@270611868131786762>*** as a bot that could do some things other bots couldn't and to practice using python.")
+    
+    @commands.command(name='request',
+                      description="A command that will request for a command to be made.")
+    async def request(self, ctx, *, request):
+        guild_id = str(ctx.guild.id)
+        member_id = str(ctx.author.id)
+        idea = request.lower()
+        
+        with open('config/requests.json', 'r+') as requestsfile:
+            requestsfilejson = load(requestsfile)
+        if requestsfilejson.__contains__(guild_id):
+            guild = requestsfilejson[guild_id]
+            if guild.__contains__(member_id):
+                member = guild[member_id]
+                for guild in requestsfilejson:
+                    for member in guild:
+                        if idea in member:
+                            await ctx.send("That request has already been filed previously.")
+                            return
+                member.append(idea)
+            else:
+               guild[member_id] = [idea]
+        else:
+            requestsfilejson[guild_id] = {member_id: [idea]}
+        with open('config/requests.json', 'w') as requestsfile:
+            dump(requestsfilejson, requestsfile)
+        
+        await ctx.send("Request filed!")
 
 
 def setup(lambdabot):
