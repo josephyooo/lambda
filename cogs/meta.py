@@ -1,6 +1,7 @@
-from discord import Member
+from discord import Member, Embed
 from discord.ext import commands
 from json import load, dump
+from IPython.core.release import description
 
 
 class Meta:
@@ -126,6 +127,24 @@ class Meta:
             dump(requestsfilejson, requestsfile)
         
         await ctx.send("Request filed!")
+    
+    @commands.command(name='markdown', aliases=['textformatting'],
+                      description="A command that will send an embed with help on text markdown in discord.")
+    async def markdown(self, ctx):
+        embed = Embed(title="Text Markdown 101", description="!!! Bold, italics, code blocks, and syntax highlights don't show up on embeds", color=0x064fe0)
+        embed.add_field(name='*Italics*', value='\*Italics\*')
+        embed.add_field(name='**Bold**', value='\*\*Bold\*\*')
+        embed.add_field(name='***Bold Italics***', value='\*\*\*Bold Italics\*\*\*')
+        embed.add_field(name='__Underline__', value='\_\_underline\_\_')
+        embed.add_field(name='__*Underline Italics*__', value='\_\_\*Underline Italics\*\_\_')
+        embed.add_field(name='__**Underline Bold**__', value='\_\_\*\*Underline Bold\*\*\_\_')
+        embed.add_field(name='__***Underline Bold Italics***__', value='\_\_\*\*\*Underline Bold Italics\*\*\*\_\_')
+        embed.add_field(name='~~Strikethrough~~', value='\~\~Strikethrough\~\~')
+        embed.add_field(name='`Code Blocks`', value='\`Code Blocks\`')
+        embed.add_field(name='```Multi-line\nCode Blocks```', value='\`\`\`\nMulti-line\nCode Blocks!!!\n\`\`\`')
+        embed.add_field(name='Syntax Highlighting', value='\`\`\`python\neven_numbers = [n for n in range(10) if n % 2 == 0]\n\`\`\`')
+        
+        await ctx.send(embed=embed)
 
 
 def setup(lambdabot):
