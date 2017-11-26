@@ -1,6 +1,6 @@
 A dumb personal discord bot written in [Python](https://www.python.org/) 3.6 using the cogs rewrite version of [discord.py](https://github.com/Rapptz/discord.py)
 
-I made this while also learning git, so there may be some mistakes between branches that I haven't caught yet.
+I made this while also learning git and programming, so there may be mistakes
 
 ## Usage
 
