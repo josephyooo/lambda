@@ -1,12 +1,24 @@
 import json
 import discord
 from discord.ext import commands
+from os.path import isfile
+from discord.errors import LoginFailure
 
+if isfile('config/config.json'):
+    input('PLEASE REREAD THE README.md @ https://github.com/Polokniko/lambda AGAIN\n')
 with open('config/config.json') as cfg:
     config = json.load(cfg)
 
-token = config['token']
-prefix = config['command_prefix']
+try:
+    token = config['token']
+    prefix = config['command_prefix']
+    if prefix.replace(' ', '') == '':
+        input('You need something as your prefix')
+        exit()
+except Exception as e:
+    print(e)
+    input('Are you sure you read the README.md @ https://github.com/Polokniko/lambda properly? (hint: your token or prefix cannot be found)\n')
+    exit()
 
 extensions = (
     'cogs.basic',
@@ -52,7 +64,11 @@ def main():
         else:
             print(f'Successfully loaded extension: {extension}')
 
-    lambdabot.run(token)
+    try:
+        lambdabot.run(token)
+    except LoginFailure as e:
+        print(e)
+        print('Are you sure your token is correct?')
 
 
 if __name__ == '__main__':

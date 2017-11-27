@@ -131,7 +131,7 @@ class Meta:
     @commands.command(name='markdown', aliases=['textformatting'],
                       description="A command that will send an embed with help on text markdown in discord.")
     async def markdown(self, ctx):
-        embed = Embed(title="Text Markdown 101", description="!!! Bold, italics, code blocks, and syntax highlights don't show up on embeds", color=0x064fe0)
+        embed = Embed(title="Text Markdown 101", description="!!! Bold, italics, code blocks, and syntax highlights don't show up on embedded messages.", color=0x064fe0)
         embed.add_field(name='*Italics*', value='\*Italics\*')
         embed.add_field(name='**Bold**', value='\*\*Bold\*\*')
         embed.add_field(name='***Bold Italics***', value='\*\*\*Bold Italics\*\*\*')
