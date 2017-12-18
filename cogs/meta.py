@@ -1,7 +1,6 @@
 from discord import Member, Embed
 from discord.ext import commands
 from json import load, dump
-from IPython.core.release import description
 
 
 class Meta:
