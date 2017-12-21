@@ -8,7 +8,7 @@ class Meta:
     # Meta commands (having to do with the bot/discord)
     def __init__(self, lambdabot):
         self.lambdabot = lambdabot
-    
+
     @commands.command(name='load', hidden=True,
                       description="A command that will load a certain cog extension.")
     @commands.is_owner()
@@ -58,8 +58,8 @@ class Meta:
     @commands.command(name='test', hidden=True,
                       description="A test command for my creator's testing needs.")
     @commands.is_owner()
-    async def test(self, ctx):
-        await ctx.send(type(ctx.guild.id))
+    async def test(self, ctx, parameter: str):
+        await ctx.send(parameter)
 
     @commands.command(name='joined', aliases=['joinedat'],
                       description="A command that will send the date that a certain member has joined.")
@@ -86,24 +86,24 @@ class Meta:
                       description="A command that will send the guild's owner.")
     async def owner(self, ctx):
         await ctx.send(ctx.guild.owner.mention)
-    
+
     @commands.command(name='permissions',
                       description="A command that will send the permission value of a given member.")
     async def permissions(self, ctx, member: Member):
         await ctx.send(f"{str(member)[:-5]}'s permission value is {member.roles[1].permissions.value}.\nhttps://discordapi.com/permissions.html#{member.roles[1].permissions.value}")
-    
+
     @commands.command(name='about',
                       description="A command that send a brief description of the bot.")
     async def about(self, ctx):
         await ctx.send("***lambda bot*** was created by ***<@270611868131786762>*** as a bot that could do some things other bots couldn't and to practice using python.")
-    
+
     @commands.command(name='request',
                       description="A command that will request for a command to be made.")
     async def request(self, ctx, *, request):
         guild_id = str(ctx.guild.id)
         member_id = str(ctx.author.id)
         idea = request.lower()
-        
+
         with open('config/requests.json', 'r+') as requestsfile:
             requestsfilejson = load(requestsfile)
         if requestsfilejson.__contains__(guild_id):
@@ -119,30 +119,38 @@ class Meta:
                             return
                 member.append(idea)
             else:
-               guild[member_id] = [idea]
+                guild[member_id] = [idea]
         else:
             requestsfilejson[guild_id] = {member_id: [idea]}
         with open('config/requests.json', 'w') as requestsfile:
             dump(requestsfilejson, requestsfile)
-        
+
         await ctx.send("Request filed!")
-    
+
     @commands.command(name='markdown', aliases=['textformatting'],
                       description="A command that will send an embed with help on text markdown in discord.")
     async def markdown(self, ctx):
-        embed = Embed(title="Text Markdown 101", description="!!! Bold, italics, code blocks, and syntax highlights don't show up on embedded messages.", color=0x064fe0)
+        embed = Embed(title="Text Markdown 101",
+                      description="!!! Bold, italics, code blocks, and syntax highlights don't show up on embedded messages.", color=0x064fe0)
         embed.add_field(name='*Italics*', value='\*Italics\*')
         embed.add_field(name='**Bold**', value='\*\*Bold\*\*')
-        embed.add_field(name='***Bold Italics***', value='\*\*\*Bold Italics\*\*\*')
+        embed.add_field(name='***Bold Italics***',
+                        value='\*\*\*Bold Italics\*\*\*')
         embed.add_field(name='__Underline__', value='\_\_underline\_\_')
-        embed.add_field(name='__*Underline Italics*__', value='\_\_\*Underline Italics\*\_\_')
-        embed.add_field(name='__**Underline Bold**__', value='\_\_\*\*Underline Bold\*\*\_\_')
-        embed.add_field(name='__***Underline Bold Italics***__', value='\_\_\*\*\*Underline Bold Italics\*\*\*\_\_')
-        embed.add_field(name='~~Strikethrough~~', value='\~\~Strikethrough\~\~')
+        embed.add_field(name='__*Underline Italics*__',
+                        value='\_\_\*Underline Italics\*\_\_')
+        embed.add_field(name='__**Underline Bold**__',
+                        value='\_\_\*\*Underline Bold\*\*\_\_')
+        embed.add_field(name='__***Underline Bold Italics***__',
+                        value='\_\_\*\*\*Underline Bold Italics\*\*\*\_\_')
+        embed.add_field(name='~~Strikethrough~~',
+                        value='\~\~Strikethrough\~\~')
         embed.add_field(name='`Code Blocks`', value='\`Code Blocks\`')
-        embed.add_field(name='```Multi-line\nCode Blocks```', value='\`\`\`\nMulti-line\nCode Blocks!!!\n\`\`\`')
-        embed.add_field(name='Syntax Highlighting', value='\`\`\`python\neven_numbers = [n for n in range(10) if n % 2 == 0]\n\`\`\`')
-        
+        embed.add_field(name='```Multi-line\nCode Blocks```',
+                        value='\`\`\`\nMulti-line\nCode Blocks!!!\n\`\`\`')
+        embed.add_field(name='Syntax Highlighting',
+                        value='\`\`\`python\neven_numbers = [n for n in range(10) if n % 2 == 0]\n\`\`\`')
+
         await ctx.send(embed=embed)
 
 
