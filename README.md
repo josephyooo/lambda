@@ -4,7 +4,7 @@ I made this while also learning git and programming, so there may be mistakes
 
 ## Usage
 
-If you want to use it, use your own [discord bot token](https://discordapp.com/developers/applications/me), [reddit user account](https://www.reddit.com/register), [owm api key](https://home.openweathermap.org/api_keys), [google api key](https://developers.google.com/api-client-library/python/guide/aaa_apikeys), and [google custom search engine id](https://support.google.com/customsearch/answer/2649143?hl=en). Create a new file in config called 'config.json'. Inside of that file enter your keys, tokens, etc. into it following this format:
+If you want to use it, use your own [discord bot token](https://discordapp.com/developers/applications/me), [owm api key](https://home.openweathermap.org/api_keys), [google api key](https://developers.google.com/api-client-library/python/guide/aaa_apikeys), and [google custom search engine id](https://support.google.com/customsearch/answer/2649143?hl=en). Create a new file in config called 'config.json'. Inside of that file enter your keys, tokens, etc. into it following this format:
 ```
 {
   "command_prefix": [
@@ -12,8 +12,6 @@ If you want to use it, use your own [discord bot token](https://discordapp.com/d
   ],
   "bot_name": "lambdabot",
   "token": "TOKEN",
-  "reddit_user": "USERNAME",
-  "reddit_password": "USERPASSWORD",
   "owm_api_key": "KEY",
   "cse_api_key": "KEY",
   "cse_id": "ID",
