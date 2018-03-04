@@ -23,8 +23,7 @@ eightballphrases = phrases['8ballphrases']
 
 
 class Basic:
-
-    # Basic Commands
+    # Basic commands
     def __init__(self, lambdabot):
         self.lambdabot = lambdabot
         self.stopwatches = {}
@@ -148,7 +147,8 @@ class Basic:
             self.stopwatches[author.id] = int(perf_counter())
             await ctx.send('Stopwatch started!')
         else:
-            time_elapsed = abs(self.stopwatches[author.id] - int(perf_counter()))
+            time_elapsed = abs(
+                self.stopwatches[author.id] - int(perf_counter()))
             time_elapsed = str(timedelta(seconds=time_elapsed))
             await ctx.send(f'Stopwatch stopped! {time_elapsed} seconds have passed.')
             self.stopwatches.pop(author.id)
@@ -175,7 +175,7 @@ class Basic:
             await ctx.send("You rolled a " + str(random.randint(1, upTo)))
         else:
             await ctx.send("Really? How about a number larger than one?")
-    
+
     @commands.command(aliases=['g'])
     async def google(self, ctx, results: str, *, query: str=''):
         """
@@ -188,18 +188,20 @@ class Basic:
             await ctx.send("How many results do you want? ($google ***<results>*** <query>)")
             return
         if results > 10:
-           await ctx.send("Less than 10 results please.") 
-           return
+            await ctx.send("Less than 10 results please.")
+            return
         elif query:
             service = build("customsearch", "v1", developerKey=cse_api_key)
-            results = service.cse().list(q=query, cx=cse_id, num=results).execute()['items']
+            results = service.cse().list(q=query, cx=cse_id,
+                                         num=results).execute()['items']
             embed = discord.Embed(title="Search Results", color=0x00E9FF)
             for result in results:
-                embed.add_field(name=result['title'], value=result['link'], inline=False)
+                embed.add_field(name=result['title'],
+                                value=result['link'], inline=False)
             await ctx.send(embed=embed)
         else:
             await ctx.send("What do you want me to search for you?")
-    
+
     @commands.command(aliases=['ub'])
     async def urbandictionary(self, ctx, results: str, *, query: str=''):
         """
@@ -222,15 +224,17 @@ class Basic:
                     if r.status == 200:
                         json = await r.json()
                         definitions = json['list']
-                        embed = discord.Embed(title="Search Results", color=0x0000ff)
+                        embed = discord.Embed(
+                            title="Search Results", color=0x0000ff)
                         for item in definitions[0:results]:
-                            embed.add_field(name=f"Result #{str(definitions.index(item) + 1)}", value=item['definition'], inline=False)
+                            embed.add_field(
+                                name=f"Result #{str(definitions.index(item) + 1)}", value=item['definition'], inline=False)
                         await ctx.send(embed=embed)
                     else:
                         await ctx.send(f"**ERROR**: Status == {r.status}")
         else:
             await ctx.send("Try giving me something to search.")
-    
+
     @commands.command(aliases=['randomfact'])
     async def fact(self, ctx):
         """Sends a random fact from unkno.com"""
@@ -245,7 +249,8 @@ class Basic:
     async def texttobinary(self, ctx, *, text):
         """Will convert text to binary and send the result."""
         if text:
-            bits = bin(int.from_bytes(text.encode('utf-8', 'surrogatepass'), 'big'))[2:]
+            bits = bin(int.from_bytes(text.encode(
+                'utf-8', 'surrogatepass'), 'big'))[2:]
             bits = bits.zfill(8 * ((len(bits) + 7) // 8))
             result = ''
             for n in range(len(bits) // 8):
@@ -257,14 +262,14 @@ class Basic:
 
     @commands.command(aliases=['textfrombinary', 'btt', 'tfb'])
     async def binarytotext(self, ctx, *, binary):
-            """Will convert binary to text and send the result."""
-            binary = ''.join(binary.split())
-            try:
-                n = int(binary, 2)
-            except ValueError:
-                await ctx.send("I need binary, not text")
-                return
-            await ctx.send(n.to_bytes((n.bit_length() + 7) // 8, 'big').decode('utf-8', 'surrogatepass') or '\0')
+        """Will convert binary to text and send the result."""
+        binary = ''.join(binary.split())
+        try:
+            n = int(binary, 2)
+        except ValueError:
+            await ctx.send("I need binary, not text")
+            return
+        await ctx.send(n.to_bytes((n.bit_length() + 7) // 8, 'big').decode('utf-8', 'surrogatepass') or '\0')
 
 
 def setup(lambdabot):

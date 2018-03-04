@@ -5,8 +5,7 @@ from asyncio import sleep
 
 
 class Meta:
-
-    # Meta commands (having to do with the bot/discord)
+    # Meta commands (having to do with the bot/discord).
     def __init__(self, lambdabot):
         self.lambdabot = lambdabot
 
@@ -19,7 +18,7 @@ class Meta:
         sleep(1)
         await channel.connect()
         await ctx.voice_client.disconnect()
-    
+
     @commands.command(name='load', hidden=True,
                       description="Will load a certain cog extension.")
     @commands.is_owner()

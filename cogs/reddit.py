@@ -6,8 +6,7 @@ from async_timeout import timeout
 
 
 class Reddit:
-
-    # Commands that get stuff from reddit
+    # A command that gets stuff from reddit
     def __init__(self, lambdabot):
         self.lambdabot = lambdabot
 
@@ -34,7 +33,7 @@ class Reddit:
                     name="Text", value=post['data']['selftext']) if post['data']['selftext'] else None
                 await ctx.send(embed=embed)
                 await ctx.send(post['data']['url']) if not r'r/(\w)/comments' in post['data']['url'] else None
-                
+
             '''
             for post in json['data']['children']:
                 post = random.choice(json['data']['children'])

@@ -20,7 +20,7 @@ ytdl_format_options = {
     'quiet': True,
     'no_warnings': True,
     'default_search': 'auto',
-    'source_address': '0.0.0.0' # ipv6 addresses cause issues sometimes
+    'source_address': '0.0.0.0'  # ipv6 addresses cause issues sometimes
 }
 
 ffmpeg_options = {
@@ -29,7 +29,6 @@ ffmpeg_options = {
 }
 
 ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
-
 
 class YTDLSource(discord.PCMVolumeTransformer):
     def __init__(self, source, *, data, volume=0.5):
@@ -44,7 +43,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
     async def from_url(cls, url, *, loop=None):
         loop = loop or asyncio.get_event_loop()
         data = await loop.run_in_executor(None, ytdl.extract_info, url)
-        
+
         if 'entries' in data:
             # take first item from a playlist
             data = data['entries'][0]
@@ -53,18 +52,93 @@ class YTDLSource(discord.PCMVolumeTransformer):
         return cls(discord.FFmpegPCMAudio(filename, **ffmpeg_options), data=data)
 
 
+class VoiceEntry:
+    def __init__(self, message, player):
+        self.requester = message.author
+        self.channel = message.channel
+        self.player = player
+
+    def __str__(self):
+        fmt = f'*{self.player.title}* uploaded by {self.player.data["uploader"]} and requested by {self.requester.display_name}'
+        duration = self.player.data['duration']
+        if duration:
+            fmt = fmt + ' [length: {0[0]}m {0[1]}s]'.format(divmod(duration, 60))
+        return fmt
+
+
+class VoiceState:
+    def __init__(self, lambdabot):
+        self.current = None
+        self.voice = None
+        self.lambdabot = lambdabot
+        self.play_next_song = asyncio.Event()
+        self.songs = asyncio.Queue()
+        self.skip_votes = set() # a set of user_ids that voted
+        self.audio_player = self.lambdabot.loop.create_task(self.audio_player_task())
+
+    def is_playing(self):
+        if self.voice is None or self.current is None:
+            return False
+
+        player = self.current.player
+        return not player.is_done()
+
+    @property
+    def player(self):
+        return self.current.player
+
+    def skip(self):
+        self.skip_votes.clear()
+        if self.is_playing():
+            self.player.stop()
+
+    def toggle_next(self):
+        self.lambdabot.loop.call_soon_threadsafe(self.play_next_song.set)
+
+    async def audio_player_task(self):
+        while True:
+            self.play_next_song.clear()
+            self.current = await self.songs.get()
+            await self.lambdabot.send_message(self.current.channel, 'Now playing ' + str(self.current))
+            self.current.player.start()
+            await self.play_next_song.wait()
+
+
 class Music:
-    def __init__(self, bot):
-        self.bot = bot
+    """Voice related commands."""
+    def __init__(self, lambdabot):
+        self.lambdabot = lambdabot
+        self.voice_states = {}
+    
+    def get_voice_state(self, server):
+        state = self.voice_states.get(server.id)
+        if state is None:
+            state = VoiceState(self.lambdabot)
+            self.voice_states[server.id] = state
+
+        return state
 
     @commands.command()
     async def join(self, ctx, *, channel: discord.VoiceChannel):
         """Joins a voice channel."""
         if ctx.voice_client is not None:
             return await ctx.voice_client.move_to(channel)
-        
-        await channel.connect()
 
+        await channel.connect()
+    
+    @commands.command()
+    async def summon(self, ctx):
+        """Makes the bot join your voice channel"""
+        summoned_channel = ctx.message.author.voice.channel
+        if summoned_channel is None:
+            await ctx.send("You aren't in a voice channel.")
+            return False
+
+        state = self.get_voice_state(ctx.message.guild)
+        if state.voice is None:
+            state.voice = await summoned_channel.connect()
+        else:
+            await state.voice.move_to(summoned_channel)
 
     # @commands.command()
     # async def play(self, ctx, *, query):
@@ -81,31 +155,32 @@ class Music:
 
     #     source = discord.PCMVolumeTransformer(discord.FFmpegPCMAudio(query))
     #     ctx.voice_client.play(source, after=lambda e: print('Player error: %s' % e) if e else None)
-        
+
     #     await ctx.send('Now playing: {}'.format(query))
 
     @commands.command()
     async def play(self, ctx, *, url):
-        """Plays a song.
-        If there is a song currently in the queue, then it is
-        queued until the next song is done playing.
-        This command automatically searches as well from YouTube.
-        The list of supported sites can be found here:
-        https://rg3.github.io/youtube-dl/supportedsites.html
         """
-        if ctx.voice_client is None:
-            if ctx.author.voice.channel:
-                await ctx.author.voice.channel.connect()
-            else:
-                return await ctx.send("Not connected to a voice channel.")
+        Plays a song.
+        If a link isn't provided, it will search youtube, I believe.
+        The list of supported sites can be found here: https://rg3.github.io/youtube-dl/supportedsites.html
+        """
+        # if ctx.voice_client is None:
+        #     if ctx.author.voice.channel:
+        #         await ctx.author.voice.channel.connect()
+        #     else:
+        #         return await ctx.send("Not connected to a voice channel.")
 
-        if ctx.voice_client.is_playing():
-            ctx.voice_client.stop()
+        # if ctx.voice_client.is_playing():
+        #     ctx.voice_client.stop()
 
-        player = await YTDLSource.from_url(url, loop=self.bot.loop)
-        ctx.voice_client.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
-        
-        await ctx.send('Now playing: {}'.format(player.title))
+        player = await YTDLSource.from_url(url, loop=self.lambdabot.loop)
+        # ctx.voice_client.play(player, after=lambda e: print(
+        #     'Player error: %s' % e) if e else None)
+
+        entry = VoiceEntry(ctx.message, player)
+        await ctx.send(f'Now playing: {str(entry)}')
+        await ctx.voice_client.songs.put(entry)
 
     # @commands.command()
     # async def volume(self, ctx, volume: int):
@@ -119,9 +194,22 @@ class Music:
 
     @commands.command()
     async def stop(self, ctx):
-        """Stops and disconnects the bot from voice"""
-
+        """Stops playing audio and leaves the voice channel."""
         await ctx.voice_client.disconnect()
+
+    @commands.command()
+    async def pause(self, ctx):
+        """Pauses music currently playing"""
+        if not ctx.voice_client.is_playing():
+            await ctx.send("The currently playing song isn't playing.")
+        await ctx.voice_client.pause()
+
+    @commands.command()
+    async def resume(self, ctx):
+        """Resumes paused music"""
+        if not ctx.voice_client.is_paused():
+            await ctx.send("The currently playing song isn't resumed.")
+        await ctx.voice_client.resume()
 
 
 def setup(lambdabot):

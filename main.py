@@ -27,7 +27,8 @@ extensions = (
     'cogs.games',
     'cogs.reddit',
     'cogs.weather',
-    'cogs.gamestats'
+    'cogs.gamestats',
+    'cogs.music'
 )
 
 
@@ -56,6 +57,10 @@ def main():
         print('-' * 20)
 
         await lambdabot.change_presence(game=discord.Game(name="$help"))
+    
+    @lambdabot.event
+    async def on_command_error(ctx, error):
+        await ctx.send(f"**ERROR:** {error}")
 
     for extension in extensions:
         try:

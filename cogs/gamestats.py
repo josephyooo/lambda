@@ -10,8 +10,7 @@ steam_api_key = config['steam_api_key']
 
 
 class Gamestats:
-
-    # Commands that retrieve gamestats
+    # Commands that retrieve game statistics.
     def __init__(self, lambdabot):
         self.lambdabot = lambdabot
 
