@@ -11,15 +11,13 @@ owm_api_key = config['owm_api_key']
 
 
 class Weather:
-
     # Command that gets weather using OpenWeatherMap
     def __init__(self, lambdabot):
         self.lambdabot = lambdabot
 
     @commands.command(aliases=['weather'])
     async def forecast(self, ctx, *, location: str=''):
-        """Will send the given location's weather forecast."""
-        # forecast <unit> <location>
+        """Will send the given location's weather forecast using OpenWeatherMap."""
         try:
             owm = OWM(owm_api_key)
     

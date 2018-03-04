@@ -16,8 +16,9 @@ class Gamestats:
         self.lambdabot = lambdabot
 
     @commands.command('csgostats', aliases=['csgo'],
-                      description="A command that will send the given user's kills, deaths, time played, etc.")
+                      description="Will send the given user's kills, deaths, time played, etc.")
     async def csgostats(self, ctx, id: str=''):
+        """Will send the given user's basic CS:GO stats."""
         if id:
             isid = False
             for part in id.split('/'):

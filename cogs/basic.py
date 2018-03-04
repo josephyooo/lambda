@@ -29,50 +29,50 @@ class Basic:
         self.lambdabot = lambdabot
         self.stopwatches = {}
 
-    @commands.command(name='ping',
-                      description="A command that will send the bot's latency.")
+    @commands.command()
     async def ping(self, ctx):
+        """Will send the bot's latency."""
         await ctx.send(f'{self.lambdabot.latency * 1000} ms')
 
-    @commands.command(name='flip', aliases=['coinflip', 'coin_flip'],
-                      description="A command that will randomly send either 'Heads' or Tails'.")
+    @commands.command(aliases=['coinflip', 'coin_flip'])
     async def flip(self, ctx):
+        """Will randomly send either 'Heads' or 'Tails'."""
         await ctx.send(random.choice(("Heads", "Tails")))
 
-    @commands.command(name='8ball', aliases=['eightball'],
-                      description="A command that will send a random respond to a question.")
+    @commands.command(name='8ball', aliases=['eightball'])
     async def ball(self, ctx, *question: str):
-        ctx.trigger_typing()
-        if question[-1][-1] != '?':
-            await ctx.send("Is that really a question?")
-        else:
-            await ctx.send(random.choice(eightballphrases))
+        """Will send a random response to a question."""
+        # ctx.trigger_typing()
+        # if question[-1][-1] != '?':
+        #     await ctx.send("Is that really a question?")
+        # else:
+        await ctx.send(random.choice(eightballphrases))
 
-    @commands.command(name='reverse',
-                      description="A command that will reverse the given text")
+    @commands.command()
     async def reverse(self, ctx, *, message):
+        """Will reverse the given text"""
         await ctx.send(message[::-1])
 
-    @commands.command(name='repeat',
-                      description='A command that will repeat the text a number of times')
-    async def repeat(self, ctx, amount: int, *, message):
-        if amount > 5:
-            await ctx.send("That's too much. Use a number less than 5 please.")
-        else:
-            for i in range(amount):
-                await ctx.send(message)
+    # @commands.command()
+    # async def repeat(self, ctx, amount: int, *, message):
+    #     """Will repeat a given text a number of times"""
+    #     if amount > 5:
+    #         await ctx.send("That's too much. Use a number less than 5 please.")
+    #     else:
+    #         for i in range(amount):
+    #             await ctx.send(message)
 
-    @commands.command(name='gethelp', hidden=True,
-                      description="A joke command that will send the National Suicide Prevention Line formatted with the given text.")
+    @commands.command(hidden=True)
     async def gethelp(self, ctx, *, name: str):
+        """A joke command that will send the National Suicide Prevention Line formatted with the given text."""
         name = name.title()
         await ctx.send(f"You're not alone **{name}**. Confidential help is available for free.\n"
                        "National Suicide Prevention Line\nCall **1-800-273-8255**\n"
                        "Available 24 hours everyday")
 
-    @commands.command(name='cat',
-                      description="A command that will send a random cat photo from random.cat")
+    @commands.command()
     async def cat(self, ctx):
+        """Will send a random cat photo from random.cat"""
         ctx.trigger_typing()
         async with ClientSession() as session:
             async with session.get('http://random.cat/meow') as r:
@@ -92,8 +92,9 @@ class Basic:
                 else:
                     await ctx.send(f"**ERROR**: Status == {r.status}")
 
-    @commands.command(name='dog', description="A command that will send a random dog photo from random.dog")
+    @commands.command()
     async def dog(self, ctx):
+        """Will send a random dog photo from random.dog"""
         async with ClientSession() as session:
             async with session.get('https://random.dog/woof.json') as r:
                 if r.status == 200:
@@ -112,8 +113,9 @@ class Basic:
                 else:
                     await ctx.send(f"**ERROR**: Status == {r.status}")
 
-    @commands.command(name='shibe', description="A command that will send a random shibe photo from shibe.online")
+    @commands.command()
     async def shibe(self, ctx):
+        """Will send a random shibe photo from shibe.online"""
         async with ClientSession() as session:
             async with session.get('http://shibe.online/api/shibes?count=1') as r:
                 if r.status == 200:
@@ -132,14 +134,14 @@ class Basic:
                 else:
                     await ctx.send(f"**ERROR**: Status == {r.status}")
 
-    @commands.command(name='lmgtfy',
-                      description="A description that creates an lmgtfy link for you.")
+    @commands.command()
     async def lmgtfy(self, ctx, *, request: str):
+        """A description that generates and sends an lmgtfy link for you."""
         request = request.replace(' ', '+')
         await ctx.send('https://lmgtfy.com/?q=' + request)
 
     @commands.command(name='stopwatch', aliases=['sw'],
-                      description="A command that will return time elapsed between the first call and the second")
+                      description="Will return time elapsed between the first call and the second")
     async def stopwatch(self, ctx):
         author = ctx.message.author
         if author.id not in self.stopwatches:
@@ -151,9 +153,9 @@ class Basic:
             await ctx.send(f'Stopwatch stopped! {time_elapsed} seconds have passed.')
             self.stopwatches.pop(author.id)
 
-    @commands.command(name='choose', aliases=['choosebetween', 'cb'],
-                      description="A command that will choose between multiple choices using && to denote multiple choices")
+    @commands.command(aliases=['choosebetween', 'cb'])
     async def choose(self, ctx, *, choices: str=''):
+        """Will choose between multiple choices using && to denote between multiple choices"""
         if not choices:
             await ctx.send("What's the point?")
             return
@@ -163,17 +165,23 @@ class Basic:
         else:
             await ctx.send("Not enough choices. Give me at least 2 choices to pick from.")
 
-    @commands.command(name='roll',
-                      description="A command that will generate a random number between 1 and user choice. Defaults to 100")
-    async def roll(self, ctx, upTo: int=100):
+    @commands.command()
+    async def roll(self, ctx, upTo: int=6):
+        """
+        Will generate a random number between 1 and user choice.
+        Defaults to 6.
+        """
         if upTo > 1:
             await ctx.send("You rolled a " + str(random.randint(1, upTo)))
         else:
             await ctx.send("Really? How about a number larger than one?")
     
-    @commands.command(name='google', aliases=['g'],
-                      description="A command that will send a specified amount of search results from google.")
+    @commands.command(aliases=['g'])
     async def google(self, ctx, results: str, *, query: str=''):
+        """
+        Searches using google
+        Will send a specified amount of search results from google.
+        """
         try:
             results = int(results)
         except ValueError:
@@ -192,9 +200,12 @@ class Basic:
         else:
             await ctx.send("What do you want me to search for you?")
     
-    @commands.command(name='urbandictionary', aliases=['ub'],
-                      description="A command that will send a search result of the given request in urban dictionary.")
+    @commands.command(aliases=['ub'])
     async def urbandictionary(self, ctx, results: str, *, query: str=''):
+        """
+        Searches Urban Dictionary
+        Will send a specified amount of search results from urban dictionary.
+        """
         try:
             results = int(results)
             if results < 1:
@@ -220,9 +231,9 @@ class Basic:
         else:
             await ctx.send("Try giving me something to search.")
     
-    @commands.command(name='fact', aliases=['randomfact'],
-                      description="Sends a random fact")
+    @commands.command(aliases=['randomfact'])
     async def fact(self, ctx):
+        """Sends a random fact from unkno.com"""
         async with ClientSession() as session:
             async with session.get('http://unkno.com/') as r:
                 soup = BeautifulSoup(await r.text(), "html.parser")
@@ -230,9 +241,9 @@ class Basic:
                 for fact in facts:
                     await ctx.send(fact)
 
-    @commands.command(name='texttobinary', aliases=['binaryfromtext', 'ttb', 'bft'],
-                      description="Translates text into binary")
+    @commands.command(aliases=['binaryfromtext', 'ttb', 'bft'])
     async def texttobinary(self, ctx, *, text):
+        """Will convert text to binary and send the result."""
         if text:
             bits = bin(int.from_bytes(text.encode('utf-8', 'surrogatepass'), 'big'))[2:]
             bits = bits.zfill(8 * ((len(bits) + 7) // 8))
@@ -244,8 +255,9 @@ class Basic:
         else:
             await ctx.send("What do you want me to translate?")
 
-    @commands.command(name='binarytotext', aliases=['textfrombinary', 'btt', 'tfb'])
+    @commands.command(aliases=['textfrombinary', 'btt', 'tfb'])
     async def binarytotext(self, ctx, *, binary):
+            """Will convert binary to text and send the result."""
             binary = ''.join(binary.split())
             try:
                 n = int(binary, 2)

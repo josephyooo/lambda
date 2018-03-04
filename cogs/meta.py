@@ -1,6 +1,7 @@
-from discord import Member, Embed
+from discord import Member, Embed, VoiceChannel
 from discord.ext import commands
 from json import load, dump
+from asyncio import sleep
 
 
 class Meta:
@@ -9,10 +10,21 @@ class Meta:
     def __init__(self, lambdabot):
         self.lambdabot = lambdabot
 
+    @commands.command(hidden=True)
+    @commands.is_owner()
+    async def test(self, ctx, channel: VoiceChannel):
+        """A test command. Only the bot's host can use this command."""
+        if ctx.voice_client is not None:
+            return await ctx.voice_client.move_to(channel)
+        sleep(1)
+        await channel.connect()
+        await ctx.voice_client.disconnect()
+    
     @commands.command(name='load', hidden=True,
-                      description="A command that will load a certain cog extension.")
+                      description="Will load a certain cog extension.")
     @commands.is_owner()
     async def cog_load(self, ctx, *, cog: str):
+        """Will load a certain cog extension. Only the bot's host can use this command."""
         if not cog[:5] == 'cogs.':
             cog = 'cogs.' + cog
         try:
@@ -22,10 +34,10 @@ class Meta:
         else:
             await ctx.send(f'Successfully loaded {cog}')
 
-    @commands.command(name='unload', hidden=True,
-                      description="A command that will unload a certain cog extension.")
+    @commands.command(hidden=True)
     @commands.is_owner()
     async def cog_unload(self, ctx, *, cog: str):
+        """Will unload a certain cog extension. Only the bot's host can use this command."""
         if not cog[:5] == 'cogs.':
             cog = 'cogs.' + cog
         try:
@@ -35,9 +47,9 @@ class Meta:
         else:
             await ctx.send('{} successfully unloaded'.format(cog))
 
-    @commands.command(name='reload', hidden=True,
-                      description="A command that will reload a certain cog extension.")
+    @commands.command(hidden=True)
     async def cog_reload(self, ctx, *, cog: str):
+        """Will reload a certain cog extension. Only the bot's host can use this command."""
         if not cog[:5] == 'cogs.':
             cog = 'cogs.' + cog
         try:
@@ -48,88 +60,84 @@ class Meta:
         else:
             await ctx.send('Successfully reloaded {}'.format(cog))
 
-    @commands.command(name='shutdown', hidden=True,
-                      description="A command that will shut down the bot")
+    @commands.command(hidden=True)
     @commands.is_owner()
     async def shutdown(self, ctx):
+        """Will shut down the bot. Only the bot's host can use this command."""
         await ctx.send('SHUTTING DOWN....')
         await self.lambdabot.logout()
 
-    @commands.command(name='test', hidden=True,
-                      description="A test command for my creator's testing needs.")
-    @commands.is_owner()
-    async def test(self, ctx, parameter: str):
-        await ctx.send(parameter)
-
-    @commands.command(name='joined', aliases=['joinedat'],
-                      description="A command that will send the date that a certain member has joined.")
+    @commands.command(aliases=['joinedat'])
     async def joined(self, ctx, member: Member):
+        """Will send the date that a certain member has joined."""
         date = member.joined_at.strftime('%B %d, %Y')
         await ctx.send(f'"{member.name}" joined this server on {date}.')
 
-    @commands.command(name='clear',
-                      description="A command that will clear a specified number of messages from a channel.")
+    @commands.command()
     async def clear(self, ctx, amount: int):
+        """Will clear a specified number of messages from a channel."""
         if (8192 & int(ctx.author.roles[1].permissions.value)) > 0:
             amount += 1
             await ctx.channel.purge(limit=amount)
             await ctx.send(f"I have cleared {amount - 1} messages.", delete_after=10)
         else:
-            await ctx.send(f"Sorry, but you don't have the permissions to do so, {ctx.author.mention}")
+            await ctx.send(f"Sorry, but you don't have the permissions to do so, {ctx.author.mention}. This may be due to one of your roles not having the *'Manage Messages'* permission.")
 
-    @commands.command(name='id',
-                      description="A command that will send the given member's id")
+    @commands.command()
     async def id(self, ctx, *, member: Member):
+        """Will send the given member's id"""
         await ctx.send(f"{member.name}'s id is <{member.id}>")
 
-    @commands.command(name='owner',
-                      description="A command that will send the guild's owner.")
+    @commands.command()
     async def owner(self, ctx):
+        """Will send the guild's owner"""
         await ctx.send(ctx.guild.owner.mention)
 
-    @commands.command(name='permissions',
-                      description="A command that will send the permission value of a given member.")
+    @commands.command()
     async def permissions(self, ctx, member: Member):
+        """Will send the permissions value of a given member."""
         await ctx.send(f"{str(member)[:-5]}'s permission value is {member.roles[1].permissions.value}.\nhttps://discordapi.com/permissions.html#{member.roles[1].permissions.value}")
 
-    @commands.command(name='about',
-                      description="A command that send a brief description of the bot.")
+    @commands.command()
     async def about(self, ctx):
-        await ctx.send("***lambda bot*** was created by ***<@270611868131786762>*** as a bot that could do some things other bots couldn't and to practice using python.")
+        """Tells you information about the bot."""
+        await ctx.send("***lambda bot*** was created by ***<@270611868131786762>*** as a bot that could do some things other bots couldn't.")
 
-    @commands.command(name='request',
-                      description="A command that will request for a command to be made.")
-    async def request(self, ctx, *, request):
-        guild_id = str(ctx.guild.id)
-        member_id = str(ctx.author.id)
-        idea = request.lower()
+    # doesn't even work properly
+    # @commands.command(name='request',
+    #                   description="Will request for a command to be made.")
+    # async def request(self, ctx, *, request):
+    #     guild_id = str(ctx.guild.id)
+    #     member_id = str(ctx.author.id)
+    #     idea = request.lower()
 
-        with open('config/requests.json', 'r+') as requestsfile:
-            requestsfilejson = load(requestsfile)
-        if requestsfilejson.__contains__(guild_id):
-            requester_guild = requestsfilejson[guild_id]
-            if requester_guild.__contains__(member_id):
-                member = requester_guild[member_id]
-                for guild_key in requestsfilejson:
-                    guild = requestsfilejson[guild_key]
-                    for guild_member_key in guild:
-                        guild_member = guild[guild_member_key]
-                        if idea in guild_member:
-                            await ctx.send("That request has already been filed previously.")
-                            return
-                member.append(idea)
-            else:
-                guild[member_id] = [idea]
-        else:
-            requestsfilejson[guild_id] = {member_id: [idea]}
-        with open('config/requests.json', 'w') as requestsfile:
-            dump(requestsfilejson, requestsfile)
+    #     with open('config/requests.json', 'r+') as requestsfile:
+    #         requestsfilejson = load(requestsfile)
+    #     if requestsfilejson.__contains__(guild_id):
+    #         requester_guild = requestsfilejson[guild_id]
+    #         if requester_guild.__contains__(member_id):
+    #             member = requester_guild[member_id]
+    #             for guild_key in requestsfilejson:
+    #                 guild = requestsfilejson[guild_key]
+    #                 for guild_member_key in guild:
+    #                     guild_member = guild[guild_member_key]
+    #                     if idea in guild_member:
+    #                         await ctx.send("That request has already been filed previously.")
+    #                         return
+    #             member.append(idea)
+    #         else:
+    #             guild[member_id] = [idea]
+    #     else:
+    #         requestsfilejson[guild_id] = {member_id: [idea]}
+    #     with open('config/requests.json', 'w') as requestsfile:
+    #         dump(requestsfilejson, requestsfile)
 
-        await ctx.send("Request filed!")
+    #     await ctx.send("Request filed!")
 
     @commands.command(name='markdown', aliases=['textformatting'],
-                      description="A command that will send an embed with help on text markdown in discord.")
+                      description="Will send an embed with help on text markdown in discord.")
     async def markdown(self, ctx):
+        """Gives you help on Discord's text markdown."""
         embed = Embed(title="Text Markdown 101",
                       description="!!! Bold, italics, code blocks, and syntax highlights don't show up on embedded messages.", color=0x064fe0)
         embed.add_field(name='*Italics*', value='\*Italics\*')

@@ -11,9 +11,12 @@ class Reddit:
     def __init__(self, lambdabot):
         self.lambdabot = lambdabot
 
-    @commands.command(name='reddit',
-                      description="A command that will return the title, selftext, url, and score of a random post in the top 50 of a subreddit unless otherwise specified.")
+    @commands.command()
     async def reddit(self, ctx, subreddit: str='', limit: str='1', sort: str='hot', oftop: int=50):
+        """
+        Will send a semi-random reddit post from the given subreddit.
+        By default, it'll send the title, selftext, url, and score of a random post in the top 50 of the given subreddit.
+        """
         if not subreddit:
             await ctx.send('Please enter a subreddit.')
         async with aiohttp.ClientSession() as session:

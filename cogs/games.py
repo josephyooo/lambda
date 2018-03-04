@@ -8,10 +8,9 @@ class Games:
     def __init__(self, lambdabot):
         self.lamdabot = lambdabot
 
-    @commands.command(name="guess", aliases=["guessinggame", "guessing_game"],
-                      description="A command that will play a guessing game with the author of the command.")
+    @commands.command(aliases=["guessinggame", "guessing_game"])
     async def guess(self, ctx):
-
+        """Plays a guessing game with the author of the command."""
         async def play():
             try:
                 await ctx.send("Let's play the guessing game! What number would you like to guess to?")
@@ -65,10 +64,9 @@ class Games:
 
         await play()
 
-    @commands.command(name="rps", aliases=["rockpaperscissors", "rock_paper_scissors"],
-                      description="A command that will play a game of rps with the author of the command.")
+    @commands.command(aliases=["rockpaperscissors", "rock_paper_scissors"])
     async def rps(self, ctx):
-
+        """Plays a game of rps with the author of the command."""
         async def play():
             await ctx.send("Let's play **RPS**! Choose your weapon of choice.")
             choices = ('rock', 'paper', 'scissors')
