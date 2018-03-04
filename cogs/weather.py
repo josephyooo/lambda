@@ -16,9 +16,9 @@ class Weather:
     def __init__(self, lambdabot):
         self.lambdabot = lambdabot
 
-    @commands.command(name="forecast", aliases=['weather'],
-                      description="A command that will send the given location's weather forecast")
+    @commands.command(aliases=['weather'])
     async def forecast(self, ctx, *, location: str=''):
+        """Will send the given location's weather forecast."""
         # forecast <unit> <location>
         try:
             owm = OWM(owm_api_key)
