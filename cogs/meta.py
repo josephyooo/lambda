@@ -75,7 +75,7 @@ class Meta:
     @commands.command()
     async def clear(self, ctx, amount: int):
         """Will clear a specified number of messages from a channel."""
-        if (8192 & int(ctx.author.roles[1].permissions.value)) > 0:
+        if ((8192 & int(ctx.author.roles[1].permissions.value)) > 0) or ((8 & int(ctx.author.roles[1].permissions.value)) > 0):
             amount += 1
             await ctx.channel.purge(limit=amount)
             await ctx.send(f"I have cleared {amount - 1} messages.", delete_after=10)
@@ -103,35 +103,39 @@ class Meta:
         await ctx.send("***lambda bot*** was created by ***<@270611868131786762>*** as a bot that could do some things other bots couldn't.")
 
     # doesn't even work properly
-    # @commands.command(name='request',
-    #                   description="Will request for a command to be made.")
-    # async def request(self, ctx, *, request):
-    #     guild_id = str(ctx.guild.id)
-    #     member_id = str(ctx.author.id)
-    #     idea = request.lower()
+    @commands.command(name='request',
+                      description="Will request for a command to be made.")
+    async def request(self, ctx, *, request):
+        guild_id = str(ctx.guild.id)
+        member_id = str(ctx.author.id)
+        idea = request.lower()
 
-    #     with open('config/requests.json', 'r+') as requestsfile:
-    #         requestsfilejson = load(requestsfile)
-    #     if requestsfilejson.__contains__(guild_id):
-    #         requester_guild = requestsfilejson[guild_id]
-    #         if requester_guild.__contains__(member_id):
-    #             member = requester_guild[member_id]
-    #             for guild_key in requestsfilejson:
-    #                 guild = requestsfilejson[guild_key]
-    #                 for guild_member_key in guild:
-    #                     guild_member = guild[guild_member_key]
-    #                     if idea in guild_member:
-    #                         await ctx.send("That request has already been filed previously.")
-    #                         return
-    #             member.append(idea)
-    #         else:
-    #             guild[member_id] = [idea]
-    #     else:
-    #         requestsfilejson[guild_id] = {member_id: [idea]}
-    #     with open('config/requests.json', 'w') as requestsfile:
-    #         dump(requestsfilejson, requestsfile)
+        with open('config/requests.json', 'r+') as requestsfile:
+            requestsfilejson = load(requestsfile)
+            requestsfile.seek(0)
+            requestsfile.truncate()
+            if requestsfilejson.__contains__(guild_id):
+                requester_guild = requestsfilejson[guild_id]
+                if requester_guild.__contains__(member_id):
+                    member = requester_guild[member_id]
+                    for guild_key in requestsfilejson:
+                        guild = requestsfilejson[guild_key]
+                        for guild_member_key in guild:
+                            guild_member = guild[guild_member_key]
+                            if idea in guild_member:
+                                await ctx.send("That request has already been filed previously.")
+                                dump(requestsfilejson, requestsfile)
+                                return
+                    member.append(idea)
+                    dump(requestsfilejson, requestsfile)
+                else:
+                    guild[member_id] = [idea]
+                    dump(requestsfilejson, requestsfile)
+            else:
+                requestsfilejson[guild_id] = {member_id: [idea]}
+                dump(requestsfilejson, requestsfile)
 
-    #     await ctx.send("Request filed!")
+        await ctx.send("Request filed!")
 
     @commands.command(name='markdown', aliases=['textformatting'],
                       description="Will send an embed with help on text markdown in discord.")
