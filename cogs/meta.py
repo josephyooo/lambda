@@ -103,9 +103,9 @@ class Meta:
         await ctx.send("***lambda bot*** was created by ***<@270611868131786762>*** as a bot that could do some things other bots couldn't.")
 
     # doesn't even work properly
-    @commands.command(name='request',
-                      description="Will request for a command to be made.")
+    @commands.command()
     async def request(self, ctx, *, request):
+        """Use this command to request a command to be made."""
         guild_id = str(ctx.guild.id)
         member_id = str(ctx.author.id)
         idea = request.lower()
@@ -137,8 +137,7 @@ class Meta:
 
         await ctx.send("Request filed!")
 
-    @commands.command(name='markdown', aliases=['textformatting'],
-                      description="Will send an embed with help on text markdown in discord.")
+    @commands.command(aliases=['textformatting'])
     async def markdown(self, ctx):
         """Gives you help on Discord's text markdown."""
         embed = Embed(title="Text Markdown 101",
