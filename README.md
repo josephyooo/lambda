@@ -1,4 +1,4 @@
-A dumb personal discord bot written in [Python](https://www.python.org/) 3.6 using the cogs rewrite version of [discord.py](https://github.com/Rapptz/discord.py)
+A dumb personal discord bot written in [Python](https://www.python.org/) 3.6 using the cogs rewrite version of [discord.py](https://github.com/Rapptz/discord.py/tree/rewrite)
 
 I made this while also learning git and programming, so there may be mistakes
 
