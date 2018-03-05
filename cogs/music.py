@@ -59,7 +59,7 @@ class VoiceEntry:
         self.player = player
 
     def __str__(self):
-        fmt = f'*{self.player.title}* uploaded by {self.player.data["uploader"]} and requested by {self.requester.display_name}'
+        fmt = f'***{self.player.title}*** uploaded by ***{self.player.data["uploader"]}*** and requested by ***{self.requester.display_name}***'
         duration = self.player.data['duration']
         if duration:
             fmt = fmt + ' [length: {0[0]}m {0[1]}s]'.format(divmod(duration, 60))
@@ -139,6 +139,8 @@ class Music:
             state.voice = await summoned_channel.connect()
         else:
             await state.voice.move_to(summoned_channel)
+        
+        return True
 
     # @commands.command()
     # async def play(self, ctx, *, query):
@@ -165,22 +167,29 @@ class Music:
         If a link isn't provided, it will search youtube, I believe.
         The list of supported sites can be found here: https://rg3.github.io/youtube-dl/supportedsites.html
         """
-        # if ctx.voice_client is None:
-        #     if ctx.author.voice.channel:
-        #         await ctx.author.voice.channel.connect()
-        #     else:
-        #         return await ctx.send("Not connected to a voice channel.")
+        state = self.get_voice_state(ctx.message.guild)
 
-        # if ctx.voice_client.is_playing():
-        #     ctx.voice_client.stop()
+        if state.voice is None:
+            success = await ctx.invoke(self.summon)
+            if not success:
+                return
+
+        if ctx.voice_client is None:
+            if ctx.author.voice.channel:
+                await ctx.author.voice.channel.connect()
+            else:
+                return await ctx.send("Not connected to a voice channel.")
+
+        if ctx.voice_client.is_playing():
+            ctx.voice_client.stop()
 
         player = await YTDLSource.from_url(url, loop=self.lambdabot.loop)
-        # ctx.voice_client.play(player, after=lambda e: print(
-        #     'Player error: %s' % e) if e else None)
+        ctx.voice_client.play(player, after=lambda e: print(
+            'Player error: %s' % e) if e else None)
 
         entry = VoiceEntry(ctx.message, player)
         await ctx.send(f'Now playing: {str(entry)}')
-        await ctx.voice_client.songs.put(entry)
+        await state.songs.put(entry)
 
     # @commands.command()
     # async def volume(self, ctx, volume: int):
@@ -195,21 +204,36 @@ class Music:
     @commands.command()
     async def stop(self, ctx):
         """Stops playing audio and leaves the voice channel."""
-        await ctx.voice_client.disconnect()
+        server = ctx.message.guild
+        state = self.get_voice_state(server)
+        
+        try:
+            state.audio_player.cancel()
+            del self.voice_states[server.id]
+            await state.voice.disconnect()
+        except:
+            pass
 
     @commands.command()
     async def pause(self, ctx):
         """Pauses music currently playing"""
-        if not ctx.voice_client.is_playing():
-            await ctx.send("The currently playing song isn't playing.")
-        await ctx.voice_client.pause()
+        if ctx.voice_client.is_playing():
+            ctx.voice_client.pause()
+            await ctx.send(f"***{self.get_voice_state(ctx.message.guild).player.title}*** has been paused.")
+        else:
+            await ctx.send("Nothing's playing.")
+        # if not ctx.voice_client.is_playing():
+        #     await ctx.send("The currently playing song isn't playing.")
+        # ctx.voice_client.pause()
 
     @commands.command()
     async def resume(self, ctx):
         """Resumes paused music"""
-        if not ctx.voice_client.is_paused():
-            await ctx.send("The currently playing song isn't resumed.")
-        await ctx.voice_client.resume()
+        if ctx.voice_client.is_paused():
+            ctx.voice_client.resume()
+            await ctx.send(f"***{self.get_voice_state(ctx.message.guild).player.title}*** has been resumed.")
+        else:
+            await ctx.send("Nothing's paused.")
 
 
 def setup(lambdabot):
