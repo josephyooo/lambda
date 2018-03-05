@@ -1,3 +1,5 @@
+"""Removed due to being really annoying"""
+
 from discord.ext import commands
 import json
 import random
