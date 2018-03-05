@@ -139,9 +139,9 @@ class Basic:
         request = request.replace(' ', '+')
         await ctx.send('https://lmgtfy.com/?q=' + request)
 
-    @commands.command(name='stopwatch', aliases=['sw'],
-                      description="Will return time elapsed between the first call and the second")
+    @commands.command(aliases=['sw'])
     async def stopwatch(self, ctx):
+        """Will return time elapsed between the first call and the second."""
         author = ctx.message.author
         if author.id not in self.stopwatches:
             self.stopwatches[author.id] = int(perf_counter())
