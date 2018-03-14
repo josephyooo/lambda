@@ -1,4 +1,6 @@
+from re import sub
 from discord.ext import commands
+from traceback import print_exc
 
 
 class Translations:
@@ -55,7 +57,7 @@ class Translations:
         await ctx.send(text)
     
     @commands.command()
-    async def makelarge(self, ctx, *, text):
+    async def toemojis(self, ctx, *, text):
         """Converts normal text into emojis"""
         result = ''
         for c in text:
@@ -119,6 +121,45 @@ class Translations:
             await ctx.send("I need binary, not text")
             return
         await ctx.send(n.to_bytes((n.bit_length() + 7) // 8, 'big').decode('utf-8', 'surrogatepass') or '\0')
+    
+    @commands.command()
+    async def tobraille(self, ctx, * ,text):
+        text = text.lower()
+
+        text = sub(r'a|1', '⠁', text)
+        text = sub(r'b|2', '⠃', text)
+        text = sub(r'c|3', '⠉', text)
+        text = sub(r'd|4', '⠙', text)
+        text = sub(r'e|5', '⠑', text)
+        text = sub(r'f|6', '⠋', text)
+        text = sub(r'g|7', '⠛', text)
+        text = sub(r'h|8', '⠓', text)
+        text = sub(r'i|9', '⠊', text)
+        text = sub(r'j|0', '⠚', text)
+        text = sub(r'k', '⠅', text)
+        text = sub(r'l', '⠇', text)
+        text = sub(r'm', '⠍', text)
+        text = sub(r'n', '⠝', text)
+        text = sub(r'o', '⠕', text)
+        text = sub(r'p', '⠏', text)
+        text = sub(r'q', '⠟', text)
+        text = sub(r'r', '⠗', text)
+        text = sub(r's', '⠎', text)
+        text = sub(r't', '⠞', text)
+        text = sub(r'u', '⠥', text)
+        text = sub(r'v', '⠧', text)
+        text = sub(r'w', '⠺', text)
+        text = sub(r'x', '⠭', text)
+        text = sub(r'y', '⠽', text)
+        text = sub(r'z', '⠵', text)
+        text = sub(r',', '⠂', text)
+        text = sub(r';', '⠆', text)
+        text = sub(r':', '⠒', text)
+        text = text.replace('.', '⠲')
+        text = sub(r'!', '⠖', text)
+        text = text.replace('?', '⠦')
+
+        await ctx.send(text)
 
 
 def setup(lambdabot):
