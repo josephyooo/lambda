@@ -245,32 +245,6 @@ class Basic:
                 for fact in facts:
                     await ctx.send(fact)
 
-    @commands.command(aliases=['binaryfromtext', 'ttb', 'bft'])
-    async def texttobinary(self, ctx, *, text):
-        """Will convert text to binary and send the result."""
-        if text:
-            bits = bin(int.from_bytes(text.encode(
-                'utf-8', 'surrogatepass'), 'big'))[2:]
-            bits = bits.zfill(8 * ((len(bits) + 7) // 8))
-            result = ''
-            for n in range(len(bits) // 8):
-                result += bits[:8] + ' '
-                bits = bits[8:]
-            await ctx.send(result)
-        else:
-            await ctx.send("What do you want me to translate?")
-
-    @commands.command(aliases=['textfrombinary', 'btt', 'tfb'])
-    async def binarytotext(self, ctx, *, binary):
-        """Will convert binary to text and send the result."""
-        binary = ''.join(binary.split())
-        try:
-            n = int(binary, 2)
-        except ValueError:
-            await ctx.send("I need binary, not text")
-            return
-        await ctx.send(n.to_bytes((n.bit_length() + 7) // 8, 'big').decode('utf-8', 'surrogatepass') or '\0')
-
 
 def setup(lambdabot):
     lambdabot.add_cog(Basic(lambdabot))

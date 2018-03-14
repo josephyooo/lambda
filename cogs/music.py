@@ -170,12 +170,19 @@ class Music:
         state = self.get_voice_state(ctx.message.guild)
 
         if state.voice is None:
-            success = await ctx.invoke(self.summon)
-            if not success:
-                return
+            await ctx.send("state.voice is None")
+            try:
+                success = await ctx.invoke(self.summon)
+            except:
+                pass
+            else:
+                if not success:
+                    return
 
         if ctx.voice_client is None:
+            await ctx.send("ctx.voice_client is None")
             if ctx.author.voice.channel:
+                await ctx.send("ctx.author.voice.channel")
                 await ctx.author.voice.channel.connect()
             else:
                 return await ctx.send("Not connected to a voice channel.")
@@ -184,12 +191,11 @@ class Music:
             ctx.voice_client.stop()
 
         player = await YTDLSource.from_url(url, loop=self.lambdabot.loop)
-        ctx.voice_client.play(player, after=lambda e: print(
-            'Player error: %s' % e) if e else None)
+        ctx.voice_client.play(player, after=lambda e: print('Player error: %s' % e) if e else None)
 
         entry = VoiceEntry(ctx.message, player)
         await ctx.send(f'Now playing: {str(entry)}')
-        await state.songs.put(entry)
+        # await state.songs.put(entry)
 
     # @commands.command()
     # async def volume(self, ctx, volume: int):
@@ -204,15 +210,17 @@ class Music:
     @commands.command()
     async def stop(self, ctx):
         """Stops playing audio and leaves the voice channel."""
-        server = ctx.message.guild
-        state = self.get_voice_state(server)
+        await ctx.voice_client.disconnect()
+        await ctx.send("Disconnected")
+        # server = ctx.message.guild
+        # state = self.get_voice_state(server)
         
-        try:
-            state.audio_player.cancel()
-            del self.voice_states[server.id]
-            await state.voice.disconnect()
-        except:
-            pass
+        # try:
+        #     state.audio_player.cancel()
+        #     del self.voice_states[server.id]
+        #     await state.voice.disconnect()
+        # except:
+        #     pass
 
     @commands.command()
     async def pause(self, ctx):

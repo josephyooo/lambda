@@ -19,8 +19,7 @@ class Meta:
         await channel.connect()
         await ctx.voice_client.disconnect()
 
-    @commands.command(name='load', hidden=True,
-                      description="Will load a certain cog extension.")
+    @commands.command(hidden=True)
     @commands.is_owner()
     async def cog_load(self, ctx, *, cog: str):
         """Will load a certain cog extension. Only the bot's host can use this command."""
