@@ -1,7 +1,7 @@
 from discord import Member, Embed, VoiceChannel
 from discord.ext import commands
 from json import load, dump
-from asyncio import sleep
+from asyncio import sleep, TimeoutError
 
 
 class Meta:
@@ -11,13 +11,15 @@ class Meta:
 
     @commands.command(hidden=True)
     @commands.is_owner()
-    async def test(self, ctx, channel: VoiceChannel):
+    async def test(self, ctx):
         """A test command. Only the bot's host can use this command."""
-        if ctx.voice_client is not None:
-            return await ctx.voice_client.move_to(channel)
-        sleep(1)
-        await channel.connect()
-        await ctx.voice_client.disconnect()
+        try:
+            await self.lambdabot.wait_for('reaction', timeout = 5, check = lambda reaction: reaction.emoji == ':thumbsup:')
+        except TimeoutError:
+            await ctx.send(':thumbsdown:')
+        else:
+            await ctx.send(':thumbsup:')
+
 
     @commands.command(hidden=True)
     @commands.is_owner()
@@ -57,6 +59,11 @@ class Meta:
             await ctx.send(f'**ERROR:** {type(e).__name__} - {e}')
         else:
             await ctx.send('Successfully reloaded {}'.format(cog))
+    
+    @commands.command()
+    async def ping(self, ctx):
+        """Will send the bot's latency."""
+        await ctx.send(f'{self.lambdabot.latency * 1000} ms')
 
     @commands.command(hidden=True)
     @commands.is_owner()

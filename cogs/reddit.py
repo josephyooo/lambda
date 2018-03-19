@@ -1,4 +1,5 @@
 from random import choice
+from re import findall
 import discord
 from discord.ext import commands
 import aiohttp
@@ -29,10 +30,15 @@ class Reddit:
                 post = choice(json['data']['children'])
                 embed = discord.Embed(title=post['data']['title'], description='Author: {}, Score: {} points'.format(
                     post['data']['author'], post['data']['score']))
-                embed.add_field(
-                    name="Text", value=post['data']['selftext']) if post['data']['selftext'] else None
                 await ctx.send(embed=embed)
-                await ctx.send(post['data']['url']) if not r'r/(\w)/comments' in post['data']['url'] else None
+                selftext = post['data']['selftext']
+                if selftext:
+                    while len(selftext) > 2000:
+                        await ctx.send(selftext[:2000])
+                        selftext = selftext[2000:]
+                    if selftext:
+                        await ctx.send(selftext)
+                await ctx.send(post['data']['url']) if not findall(r'r/([a-zA-Z]*)/comments', post['data']['url']) else None
 
             '''
             for post in json['data']['children']:

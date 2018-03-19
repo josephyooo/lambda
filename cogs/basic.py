@@ -28,11 +28,6 @@ class Basic:
         self.lambdabot = lambdabot
         self.stopwatches = {}
 
-    @commands.command()
-    async def ping(self, ctx):
-        """Will send the bot's latency."""
-        await ctx.send(f'{self.lambdabot.latency * 1000} ms')
-
     @commands.command(aliases=['coinflip', 'coin_flip'])
     async def flip(self, ctx):
         """Will randomly send either 'Heads' or 'Tails'."""
@@ -215,7 +210,7 @@ class Basic:
         except ValueError:
             await ctx.send("How many results do you want? ($urbandictionary ***<results>*** <query>)")
             return
-        if results > 20:
+        if results > 10:
             await ctx.send("Less than 20 results please.")
             return
         elif query:
@@ -244,6 +239,18 @@ class Basic:
                 facts = soup.find('div', attrs={'id': 'content'})
                 for fact in facts:
                     await ctx.send(fact)
+    
+    # @commands.command()
+    # async def trivia(self, ctx, difficulty='easy', count='1'):
+    #     """
+    #     Sends a random trivia question.
+    #     Difficulty options are 'easy', 'medium', 'hard'
+    #     Count is just the number of questions
+    #     """
+    #     async with ClientSession() as session:
+    #         async with session.get(f'https://opentdb.com/api.php?amount={count}&difficulty={difficulty}') as resp:
+    #             if r.status = 200:
+    #                 json = await r.json()
 
 
 def setup(lambdabot):

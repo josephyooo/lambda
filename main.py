@@ -28,7 +28,8 @@ extensions = (
     'cogs.reddit',
     'cogs.weather',
     'cogs.gamestats',
-    'cogs.music'
+    'cogs.music',
+    'cogs.translations'
 )
 
 
