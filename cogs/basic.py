@@ -10,7 +10,8 @@ from googleapiclient.discovery import build
 from urllib.parse import quote
 from bs4 import BeautifulSoup
 
-from config.config import cse_api_key, cse_id, eightballphrases
+from config.config import cse_api_key, cse_id
+from config.phrases import eightballphrases
 
 
 class Basic:

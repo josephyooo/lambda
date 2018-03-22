@@ -1,21 +1,21 @@
-from json import load
+from datetime import timedelta
+from random import randint
+
 from discord import Embed
 from discord.ext import commands
+from discord import Embed
 from requests import get
+from aiohttp import ClientSession
+from async_timeout import timeout
 
-with open('config/config.json') as cfg:
-    config = load(cfg)
-
-steam_api_key = config['steam_api_key']
-
+from config.config import fs_api_key, steam_api_key
 
 class Gamestats:
     # Commands that retrieve game statistics.
     def __init__(self, lambdabot):
         self.lambdabot = lambdabot
 
-    @commands.command('csgostats', aliases=['csgo'],
-                      description="Will send the given user's kills, deaths, time played, etc.")
+    @commands.command(aliases=['csgo'])
     async def csgostats(self, ctx, id: str=''):
         """Will send the given user's basic CS:GO stats."""
         if id:
@@ -72,6 +72,41 @@ class Gamestats:
                 await ctx.send("That is not a valid steam id.")
         else:
             await ctx.send("Try entering a steam user id.")
+
+    @commands.command()
+    async def fortnitestats(self, ctx, username, mode="all"):
+        """Sends back the given user's overall statistics.
+        Level is the total level, not the season level."""
+        mode = mode.lower()
+        if mode not in [mode, 'solo', 'duo', 'squad']:
+            await ctx.send(f"{mode} is not a valid mode. (All, Solo, Duo, or Squad)")
+            return
+        username = username.replace(' ', '+')
+        async with ClientSession() as session:
+            async with timeout(10):
+                async with session.get(f"https://fortnite.y3n.co/v2/player/{username}", headers={"X-Key": fs_api_key}) as response:
+                    if response.status == 200:
+                        stats = await response.json()
+                        category = mode.title() if not mode == 'all' else 'Total'
+                        playtime = str(timedelta(minutes=int(
+                            stats['br']['stats']['pc'][mode]['minutesPlayed'])))[:-3].split(':')
+                        hours = (
+                            playtime[0] + " hours") if playtime[0] != '0' else ""
+                        embed = Embed(author=f"{stats['displayName']}'s Fortnite Statistics'",
+                                      title=f"Level {stats['br']['profile']['level']} | {hours} and {playtime[1]} minutes played | {stats['br']['stats']['pc'][mode]['matchesPlayed']} matches | {stats['br']['stats']['pc'][mode]['kills']} kills",
+                                      color=randint(0, 0xffffff))
+                        embed.add_field(name=f"{category} Wins",
+                                        value=f"{stats['br']['stats']['pc'][mode]['wins']} Wins")
+                        embed.add_field(name=f"{category} Kill / Death Ratio",
+                                        value=f"{stats['br']['stats']['pc'][mode]['kpd']} Kills per Death")
+                        embed.add_field(
+                            name=f"{category} Kills", value=f"{stats['br']['stats']['pc'][mode]['kills']} Kills")
+                        embed.add_field(
+                            name=f"{category} Win Rate", value=f"{stats['br']['stats']['pc'][mode]['winRate']}% of Played Games Won")
+
+                        await ctx.send(embed=embed)
+                    else:
+                        await ctx.send(f"**ERROR:** {response.text} (That username might not be valid)")
 
 
 def setup(lambdabot):
