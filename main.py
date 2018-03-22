@@ -1,22 +1,20 @@
-import json
 from os.path import isfile
-import discord
+from sys import exit
+
+from discord import __version__, Game
 from discord.ext import commands
 from discord.errors import LoginFailure
 from discord.ext.commands.errors import CommandNotFound
 
-if not isfile('config/config.json'):
+
+if not isfile('config/config.py'):
     input('PLEASE REREAD THE README.md @ https://github.com/Polokniko/lambda AGAIN\n')
-with open('config/config.json') as cfg:
-    config = json.load(cfg)
 
 try:
-    token = config['token']
-    prefix = config['command_prefix']
-    for prefix in prefix:
-        if prefix.replace(' ', '') == '':
-            input('You need something as your prefix')
-            exit()
+    from config.config import token, command_prefix
+    if command_prefix.replace(' ', '') == '':
+        print("You need something as your prefix.")
+        exit()
 except Exception as e:
     print(e)
     input('Are you sure you read the README.md @ https://github.com/Polokniko/lambda properly? (hint: your token or prefix cannot be found)\n')
@@ -35,7 +33,7 @@ extensions = (
 
 
 def get_prefix(bot, message):
-    prefixes = prefix
+    prefixes = command_prefix
 
     if message.guild.id is None:
         return '!'
@@ -55,15 +53,15 @@ def main():
         print(f'\nLogged in as {lambdabot.user.name} (ID: {lambdabot.user.id})')
         print(f'Connected to {len(lambdabot.guilds)} servers')
         print(f'Connected to {str(len(set(lambdabot.get_all_members())))} users')
-        print(f'Version: {discord.__version__}')
+        print(f'Version: {__version__}')
         print('-' * 20)
 
-        await lambdabot.change_presence(game=discord.Game(name="$help"))
+        await lambdabot.change_presence(game=Game(name=f"{command_prefix}help"))
     
     @lambdabot.event
     async def on_command_error(ctx, error):
         if isinstance(error, CommandNotFound):
-            await ctx.send("That isn't a command. Use `$help` to view full list of commands.")
+            await ctx.send(f"That isn't a command. Use `{command_prefix}help` to view full list of commands.")
             return
         await ctx.send(f"**ERROR:** {error}")
 
