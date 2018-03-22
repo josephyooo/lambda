@@ -1,0 +1,1 @@
+# Just here so python treats the config folder as a package so that I can access config.py without using json stuff

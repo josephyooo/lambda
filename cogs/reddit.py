@@ -1,8 +1,9 @@
 from random import choice
 from re import findall
+
 import discord
 from discord.ext import commands
-import aiohttp
+from aiohttp import ClientSession
 from async_timeout import timeout
 
 
@@ -19,7 +20,7 @@ class Reddit:
         """
         if not subreddit:
             await ctx.send('Please enter a subreddit.')
-        async with aiohttp.ClientSession() as session:
+        async with ClientSession() as session:
             with timeout(10):
                 async with session.get(f'https://reddit.com/r/{subreddit}/{sort}/.json?limit={oftop}') as response:
                     json = await response.json()

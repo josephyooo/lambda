@@ -1,7 +1,8 @@
-from discord import Member, Embed, VoiceChannel
-from discord.ext import commands
 from json import load, dump
-from asyncio import sleep, TimeoutError
+
+from discord import Member, Embed
+from discord.ext import commands
+from asyncio import TimeoutError
 
 
 class Meta:
@@ -14,7 +15,7 @@ class Meta:
     async def test(self, ctx):
         """A test command. Only the bot's host can use this command."""
         try:
-            await self.lambdabot.wait_for('reaction', timeout = 5, check = lambda reaction: reaction.emoji == ':thumbsup:')
+            await self.lambdabot.wait_for('reaction', timeout=5, check=lambda reaction: reaction.emoji == ':thumbsup:')
         except TimeoutError:
             await ctx.send(':thumbsdown:')
         else:

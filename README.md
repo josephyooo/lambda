@@ -4,19 +4,16 @@ I made this while also learning git and programming, so there may be mistakes
 
 ## Usage
 
-If you want to use it, use your own [discord bot token](https://discordapp.com/developers/applications/me), [owm api key](https://home.openweathermap.org/api_keys), [google api key](https://developers.google.com/api-client-library/python/guide/aaa_apikeys), and [google custom search engine id](https://support.google.com/customsearch/answer/2649143?hl=en). Create a new file in config called 'config.json'. Inside of that file enter your keys, tokens, etc. into it following this format:
+If you want to use it, use your own [discord bot token](https://discordapp.com/developers/applications/me), [owm api key](https://home.openweathermap.org/api_keys), [google api key](https://developers.google.com/api-client-library/python/guide/aaa_apikeys), [google custom search engine id](https://support.google.com/customsearch/answer/2649143?hl=en), [steam api key](https://steamcommunity.com/dev/apikey), and [fortnite y3n api key](https://fortnite.y3n.co/). Create a new file (name it 'config.py') inside of the 'config' folder. Inside of that file enter your keys, tokens, etc. into it following this format:
 ```
-{
-  "command_prefix": [
-    "$"
-  ],
-  "bot_name": "lambdabot",
-  "token": "TOKEN",
-  "owm_api_key": "KEY",
-  "cse_api_key": "KEY",
-  "cse_id": "ID",
-  "steam_api_key": "KEY"
-}
+command_prefix = {command_prefix}
+bot_name = {bot_name}
+token = {token}
+owm_api_key = {owm_api_key}
+cse_api_key = {cse_api_key}
+cse_id = {cse_id}
+steam_api_key = {steam_api_key}
+fs_api_key = {fs_api_key}
 ```
 
 ## Requirements

@@ -1,8 +1,9 @@
 import json
+from os.path import isfile
 import discord
 from discord.ext import commands
-from os.path import isfile
 from discord.errors import LoginFailure
+from discord.ext.commands.errors import CommandNotFound
 
 if not isfile('config/config.json'):
     input('PLEASE REREAD THE README.md @ https://github.com/Polokniko/lambda AGAIN\n')
@@ -61,6 +62,9 @@ def main():
     
     @lambdabot.event
     async def on_command_error(ctx, error):
+        if isinstance(error, CommandNotFound):
+            await ctx.send("That isn't a command. Use `$help` to view full list of commands.")
+            return
         await ctx.send(f"**ERROR:** {error}")
 
     for extension in extensions:

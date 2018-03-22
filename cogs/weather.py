@@ -1,13 +1,9 @@
 from discord.ext import commands
 import discord
-from json import load
 from pyowm import OWM
 from pyowm.exceptions.not_found_error import NotFoundError
 
-with open('config/config.json') as cfg:
-    config = load(cfg)
-
-owm_api_key = config['owm_api_key']
+from config.config import owm_api_key
 
 
 class Weather:

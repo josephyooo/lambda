@@ -170,7 +170,6 @@ class Music:
         state = self.get_voice_state(ctx.message.guild)
 
         if state.voice is None:
-            await ctx.send("state.voice is None")
             try:
                 success = await ctx.invoke(self.summon)
             except:
@@ -182,7 +181,6 @@ class Music:
         if ctx.voice_client is None:
             await ctx.send("ctx.voice_client is None")
             if ctx.author.voice.channel:
-                await ctx.send("ctx.author.voice.channel")
                 await ctx.author.voice.channel.connect()
             else:
                 return await ctx.send("Not connected to a voice channel.")

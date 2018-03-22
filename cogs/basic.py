@@ -1,25 +1,16 @@
-import discord
-from discord.ext import commands
-import random
-from json import load
-from aiohttp import ClientSession
 from os import remove
 from time import perf_counter
+from random import randint, choice
 from datetime import timedelta
+
+from discord import File, Embed
+from discord.ext import commands
+from aiohttp import ClientSession
 from googleapiclient.discovery import build
-from asyncio import sleep
 from urllib.parse import quote
 from bs4 import BeautifulSoup
 
-with open('config/config.json') as cfg:
-    config = load(cfg)
-
-with open('config/phrases.json') as phr:
-    phrases = load(phr)
-
-cse_api_key = config['cse_api_key']
-cse_id = config['cse_id']
-eightballphrases = phrases['8ballphrases']
+from config.config import cse_api_key, cse_id, eightballphrases
 
 
 class Basic:
@@ -31,7 +22,7 @@ class Basic:
     @commands.command(aliases=['coinflip', 'coin_flip'])
     async def flip(self, ctx):
         """Will randomly send either 'Heads' or 'Tails'."""
-        await ctx.send(random.choice(("Heads", "Tails")))
+        await ctx.send(choice(("Heads", "Tails")))
 
     @commands.command(name='8ball', aliases=['eightball'])
     async def ball(self, ctx, *question: str):
@@ -40,7 +31,9 @@ class Basic:
         # if question[-1][-1] != '?':
         #     await ctx.send("Is that really a question?")
         # else:
-        await ctx.send(random.choice(eightballphrases))
+        if question.replace(' ', '') == '':
+            await ctx.send("At least send something.")
+        await ctx.send(choice(eightballphrases))
 
     @commands.command()
     async def reverse(self, ctx, *, message):
@@ -78,7 +71,7 @@ class Basic:
                         image = await r2.read()
                         with open(filename, 'wb') as catimg:
                             catimg.write(image)
-                    await ctx.send(file=discord.File(filename))
+                    await ctx.send(file=File(filename))
                     try:
                         remove(filename)
                     except Exception as e:
@@ -99,7 +92,7 @@ class Basic:
                         image = await r2.read()
                         with open(filename, 'wb') as dogimg:
                             dogimg.write(image)
-                    await ctx.send(file=discord.File(filename))
+                    await ctx.send(file=File(filename))
                     try:
                         remove(filename)
                     except Exception as e:
@@ -120,7 +113,7 @@ class Basic:
                         image = await r2.read()
                         with open(filename, 'wb') as shibeimg:
                             shibeimg.write(image)
-                    await ctx.send(file=discord.File(filename))
+                    await ctx.send(file=File(filename))
                     try:
                         remove(filename)
                     except Exception as e:
@@ -156,7 +149,7 @@ class Basic:
             return
         choices = choices.split('&&')
         if len(choices) > 1:
-            await ctx.send(random.choice(choices))
+            await ctx.send(choice(choices))
         else:
             await ctx.send("Not enough choices. Give me at least 2 choices to pick from.")
 
@@ -167,7 +160,7 @@ class Basic:
         Defaults to 6.
         """
         if upTo > 1:
-            await ctx.send("You rolled a " + str(random.randint(1, upTo)))
+            await ctx.send("You rolled a " + str(randint(1, upTo)))
         else:
             await ctx.send("Really? How about a number larger than one?")
 
@@ -189,7 +182,7 @@ class Basic:
             service = build("customsearch", "v1", developerKey=cse_api_key)
             results = service.cse().list(q=query, cx=cse_id,
                                          num=results).execute()['items']
-            embed = discord.Embed(title="Search Results", color=0x00E9FF)
+            embed = Embed(title="Search Results", color=randint(0, 0xffffff))
             for result in results:
                 embed.add_field(name=result['title'],
                                 value=result['link'], inline=False)
@@ -219,8 +212,8 @@ class Basic:
                     if r.status == 200:
                         json = await r.json()
                         definitions = json['list']
-                        embed = discord.Embed(
-                            title="Search Results", color=0x0000ff)
+                        embed = Embed(
+                            title="Search Results", color=randint(0, 0xffffff))
                         for item in definitions[0:results]:
                             embed.add_field(
                                 name=f"Result #{str(definitions.index(item) + 1)}", value=item['definition'], inline=False)

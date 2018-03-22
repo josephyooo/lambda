@@ -1,6 +1,10 @@
 from re import sub
-from discord.ext import commands
 from traceback import print_exc
+
+from discord.ext import commands
+from aiohttp import ClientSession
+from async_timeout import timeout
+from lxml.html import fromstring
 
 
 class Translations:
@@ -56,9 +60,11 @@ class Translations:
         
         await ctx.send(text)
     
-    @commands.command()
+    @commands.command(aliases=['toemoji'])
     async def toemojis(self, ctx, *, text):
         """Converts normal text into emojis"""
+        text = text.lower()
+        
         result = ''
         for c in text:
             if c in "abcdefghijklmnopqrstuvwxyz":
@@ -160,6 +166,20 @@ class Translations:
         text = text.replace('?', '⠦')
 
         await ctx.send(text)
+    
+    @commands.command()
+    async def toascii(self, ctx, *, text):
+        with ClientSession() as session:
+            with timeout(10):
+                async with session.get(f'http://www.patorjk.com/software/taag/#p=display&f=Big&t={text}') as resp:
+                    text = resp.text()
+                    for i in text:
+                        await ctx.send(i)
+                    # while len(text) < 2000:
+                    #     await ctx.send(text[:2000])
+                    #     text = text[2000:]
+                    # await ctx.send(text)
+                    # text = fromstring(resp.text()).xpath("//body/div[@id='maincontent']/div[@id='outputFigDisplay']/pre")
 
 
 def setup(lambdabot):
