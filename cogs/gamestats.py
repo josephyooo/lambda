@@ -142,6 +142,10 @@ class Gamestats:
         #     return
         stats = resp.json()
 
+        if stats.get('error'):
+            await ctx.send(f"**ERROR:** {stats['error']}")
+            return
+
         if mode == 'total':
             embed = Embed(title=f"{stats['lifeTimeStats'][13]['value']} Played in Total | \
                           {stats['lifeTimeStats'][7]['value']} Matches Played in Total. | \
