@@ -179,7 +179,6 @@ class Music:
                     return
 
         if ctx.voice_client is None:
-            await ctx.send("ctx.voice_client is None")
             if ctx.author.voice.channel:
                 await ctx.author.voice.channel.connect()
             else:

@@ -130,6 +130,7 @@ class Translations:
     
     @commands.command()
     async def tobraille(self, ctx, * ,text):
+        """Will convert text to braille"""
         text = text.lower()
 
         text = sub(r'a|1', '⠁', text)
@@ -167,19 +168,19 @@ class Translations:
 
         await ctx.send(text)
     
-    @commands.command()
-    async def toascii(self, ctx, *, text):
-        with ClientSession() as session:
-            with timeout(10):
-                async with session.get(f'http://www.patorjk.com/software/taag/#p=display&f=Big&t={text}') as resp:
-                    text = resp.text()
-                    for i in text:
-                        await ctx.send(i)
-                    # while len(text) < 2000:
-                    #     await ctx.send(text[:2000])
-                    #     text = text[2000:]
-                    # await ctx.send(text)
-                    # text = fromstring(resp.text()).xpath("//body/div[@id='maincontent']/div[@id='outputFigDisplay']/pre")
+    # @commands.command()
+    # async def toascii(self, ctx, *, text):
+    #     with ClientSession() as session:
+    #         with timeout(10):
+    #             async with session.get(f'http://www.patorjk.com/software/taag/#p=display&f=Big&t={text}') as resp:
+    #                 text = resp.text()
+    #                 for i in text:
+    #                     await ctx.send(i)
+    #                 # while len(text) < 2000:
+    #                 #     await ctx.send(text[:2000])
+    #                 #     text = text[2000:]
+    #                 # await ctx.send(text)
+    #                 # text = fromstring(resp.text()).xpath("//body/div[@id='maincontent']/div[@id='outputFigDisplay']/pre")
 
 
 def setup(lambdabot):
