@@ -2,9 +2,10 @@ from re import sub
 from traceback import print_exc
 
 from discord.ext import commands
+from discord.errors import HTTPException
 from aiohttp import ClientSession
 from async_timeout import timeout
-from lxml.html import fromstring
+from pyfiglet import Figlet
 
 
 class Translations:
@@ -168,19 +169,14 @@ class Translations:
 
         await ctx.send(text)
     
-    # @commands.command()
-    # async def toascii(self, ctx, *, text):
-    #     with ClientSession() as session:
-    #         with timeout(10):
-    #             async with session.get(f'http://www.patorjk.com/software/taag/#p=display&f=Big&t={text}') as resp:
-    #                 text = resp.text()
-    #                 for i in text:
-    #                     await ctx.send(i)
-    #                 # while len(text) < 2000:
-    #                 #     await ctx.send(text[:2000])
-    #                 #     text = text[2000:]
-    #                 # await ctx.send(text)
-    #                 # text = fromstring(resp.text()).xpath("//body/div[@id='maincontent']/div[@id='outputFigDisplay']/pre")
+    @commands.command(aliases=['figlet'])
+    async def toascii(self, ctx, text, font="slant"):
+        """converts text to ascii"""
+        f = Figlet(font)
+        try:
+            await ctx.send(f'```\n{f.renderText(text)}\n```')
+        except HTTPException as e:
+            await ctx.send(f"**ERROR:** {e}\nToo long?")
 
 
 def setup(lambdabot):

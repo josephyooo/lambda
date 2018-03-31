@@ -118,7 +118,7 @@ class Gamestats:
         """Gets given user's Fortnite Battle Royale statistics.
         Username: The player's username
         Mode: Can either be total, solo, duo, or squads.
-        Platform: Can only be 'pc' for now.
+        Platform: Can either be pc (Self Explanatory), xbl (Xbox), or psn (PlayStation).
         seasonex: Season exclusive, if set to true will give the player's lifetime statistics.
         Player's level only available for pc users. Not my fault."""
 

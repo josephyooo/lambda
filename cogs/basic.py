@@ -63,7 +63,7 @@ class Basic:
         """Will send a random cat photo from random.cat"""
         ctx.trigger_typing()
         async with ClientSession() as session:
-            async with session.get('http://random.cat/meow') as r:
+            async with session.get('http://aws.random.cat/meow') as r:
                 if r.status == 200:
                     js = await r.json()
                     url = js['file']
@@ -78,7 +78,7 @@ class Basic:
                     except Exception as e:
                         print(e)
                 else:
-                    await ctx.send(f"**ERROR**: Status == {r.status}")
+                    await ctx.send(f"**ERROR**: Status == {r.status} Body == {r.text}")
 
     @commands.command()
     async def dog(self, ctx):
