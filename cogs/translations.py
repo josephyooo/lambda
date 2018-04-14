@@ -171,7 +171,8 @@ class Translations:
     
     @commands.command(aliases=['figlet'])
     async def toascii(self, ctx, text, font="slant"):
-        """converts text to ascii"""
+        """Will convert text to ascii.
+        More fonts located at: http://www.figlet.org/examples.html"""
         f = Figlet(font)
         try:
             await ctx.send(f'```\n{f.renderText(text)}\n```')

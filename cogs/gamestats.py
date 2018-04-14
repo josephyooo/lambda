@@ -74,123 +74,142 @@ class Gamestats:
         else:
             await ctx.send("Try entering a steam user id.")
 
-    # Old fortnite stats command that used fortnite y3n
-
-    # @commands.command()
-    # async def fortnitestats(self, ctx, username, mode="all"):
-    #     """Sends back the given user's overall statistics.
-    #     Level is the total level, not the season level.
-    #     Only PC is supported, too bad if you wanted other platforms."""
-    #     mode = mode.lower()
-    #     if mode not in [mode, 'solo', 'duo', 'squad']:
-    #         await ctx.send(f"{mode} is not a valid mode. (All, Solo, Duo, or Squad)")
-    #         return
-    #     username = username.replace(' ', '%20')
-    #     async with ClientSession() as session:
-    #         async with timeout(10):
-    #             async with session.get(f"https://fortnite.y3n.co/v2/player/{username}", headers={"X-Key": fs_api_key}) as resp:
-    #                 if resp.status == 200:
-    #                     stats = await resp.json()
-    #                 else:
-    #                     await ctx.send(f"**ERROR:** {resp.text} (That username might not be valid)")
-    #                     return
-    #     category = mode.title() if not mode == 'all' else 'Total'
-    #     playtime = str(timedelta(minutes=int(
-    #         stats['br']['stats']['pc'][mode]['minutesPlayed'])))[:-3].split(':')
-    #     hours = (
-    #         playtime[0] + " hours") if playtime[0] != '0' else ""
-    #     embed = Embed(author=f"{stats['displayName']}'s Fortnite Statistics",
-    #                   title=f"Level {stats['br']['profile']['level']} | {hours} and {playtime[1]} minutes played | {stats['br']['stats']['pc'][mode]['matchesPlayed']} matches | {stats['br']['stats']['pc'][mode]['kills']} kills",
-    #                   color=randint(0, 0xffffff))
-    #     embed.add_field(name=f"{category} Wins",
-    #                     value=f"{stats['br']['stats']['pc'][mode]['wins']} Wins")
-    #     embed.add_field(name=f"{category} Kill / Death Ratio",
-    #                     value=f"{stats['br']['stats']['pc'][mode]['kpd']} Kills per Death")
-    #     embed.add_field(
-    #         name=f"{category} Kills", value=f"{stats['br']['stats']['pc'][mode]['kills']} Kills")
-    #     embed.add_field(
-    #         name=f"{category} Win Rate", value=f"{stats['br']['stats']['pc'][mode]['winRate']}% of Played Games Won")
-
-    #     await ctx.send(embed=embed)
-
     @commands.command(aliases=['fs'])
-    async def fortnitestats(self, ctx, username, mode='total', platform='pc', seasonex='false'):
-        """Gets given user's Fortnite Battle Royale statistics.
-        Username: The player's username
-        Mode: Can either be total, solo, duo, or squads.
-        Platform: Can either be pc (Self Explanatory), xbl (Xbox), or psn (PlayStation).
-        seasonex: Season exclusive, if set to true will give the player's lifetime statistics.
-        Player's level only available for pc users. Not my fault."""
-
-        # Checks if given values are valid.
-        if mode not in ['total', 'solo', 'duo', 'squad'] or platform not in ['pc', 'xbl', 'psn'] or seasonex not in ['true', 'false']:
-            await ctx.send("Those aren't valid options. Use $help fortnitestats for more info.")
+    async def fortnitestats(self, ctx, username, mode="all"):
+        """Sends back the given user's overall statistics.
+        Level is the total level, not the season level.
+        Only PC is supported, dm me the user that isn't on pc that has linked their Epic Games acc to their platform."""
+        mode = mode.lower()
+        if mode not in ['solo', 'duo', 'squad', 'all']:
+            await ctx.send(f"{mode} is not a valid mode. (All, Solo, Duo, or Squad)")
             return
-
-        # Gets fortnite stats from tracker network.
-        # async with ClientSession() as session:
-        #     async with timeout(10):
-        #         async with session.get(f"https://api.fortnitetracker.com/v1/profile/{platform}/{username}", headers={'TRN-Api-Key': fs_api_key}) as resp:
-        #             if resp.status == 200:
-        #                 stats = await resp.json()
-        #             else:
-        #                 await ctx.send(f"**ERROR:** {resp.text} (That username might not be valid)")
-        #                 return
-        resp = get(f"https://api.fortnitetracker.com/v1/profile/{platform}/{username}", headers={'TRN-Api-Key': fs_api_key})
-        # if resp.status != 200:
-        #     await ctx.send(f"**ERROR:** {resp.text} (That username might not be valid)")
-        #     return
-        stats = resp.json()
-
-        if stats.get('error'):
-            await ctx.send(f"**ERROR:** {stats['error']}")
-            return
-
-        if mode == 'total':
-            embed = Embed(title=f"{stats['lifeTimeStats'][13]['value']} Played in Total | \
-                          {stats['lifeTimeStats'][7]['value']} Matches Played in Total. | \
-                          {stats['lifeTimeStats'][10]['value']} Total Kills.",
-                          color=randint(0, 0xffffff))
-            embed.set_author(name=f"{stats['epicUserHandle']}'s Fortnite Statistics")
-            embed.add_field(name="Total wins", value=f"{stats['lifeTimeStats'][8]['value']} wins")
-            embed.add_field(name="Total Kill / Death Ratio",
-                            value=f"{stats['lifeTimeStats'][11]['value']} Kills per Death")
-            embed.add_field(name="Total Win Rate",
-                            value=f"{stats['lifeTimeStats'][9]['value']} of Played Games Won")
-            embed.add_field(name="Total Average Survival Time",
-                            value=f"Alive for {stats['lifeTimeStats'][14]['value']} on Average.")
-            embed.add_field(name="Total Kills per Minute",
-                            value=f"{stats['lifeTimeStats'][12]['value']} Kills per Minute")
-            
-            await ctx.send(embed=embed)
-            return
-
-        seasonex = True if seasonex.lower() == 'true' else False
-
-        # p2 for solo, p9 for duo, and p10 for squads. I have no idea why it's like this.
-        pmode = 'p2' if mode == 'solo' else 'p9' if mode == 'duo' else 'p10'
-        pmode = 'curr_' + pmode if seasonex else pmode
-        # ending is just the ending of the messages
-        ending = 'in ' + mode.title()
-        ending += ' this Season' if seasonex else ''
-
-        embed = Embed(title=f"{stats['stats'][pmode]['top1']['displayValue']} Times Won {ending} | \
-                      {stats['stats'][pmode]['matches']['displayValue']} Played {ending} | \
-                      {stats['stats'][pmode]['kills']['displayValue']} Kills {ending}",
-                      color=randint(0, 0xffffff))
-        embed.set_author(name=f"{stats['epicUserHandle']}'s Fortnite Statistics {ending}")
-        embed.add_field(name=f"Kill / Death Ratio {ending}",
-                        value=f"{stats['stats'][pmode]['kd']['displayValue']} Kills per Death {ending}")
+        username = username.replace(' ', '%20')
+        async with ClientSession() as session:
+            async with timeout(10):
+                async with session.get(f"https://fortnite.y3n.co/v2/player/{username}", headers={"X-Key": fs_api_key}) as resp:
+                    if resp.status == 200:
+                        stats = await resp.json()
+                    else:
+                        await ctx.send(f"**ERROR:** {resp.text} (That username might not be valid)")
+                        return
+        category = mode.title() if not mode == 'all' else 'Total'
+        # playtime = str(timedelta(minutes=int(
+        #     stats['br']['stats']['pc'][mode]['minutesPlayed'])))[:-3].split(':')
+        # hours = (
+        #     playtime[0] + " hours") if playtime[0] != '0' else ""
+        splittimedelta = str(timedelta(minutes=stats['br']['stats']['pc'][mode]['minutesPlayed'])).split(':')
+        timemessage = f"{splittimedelta[0]} hours, {splittimedelta[1]} minutes and {splittimedelta[2]} seconds"
         try:
-            embed.add_field(name=f"Win Ratio {ending}",
-                            value=f"{stats['stats'][pmode]['winRatio']['value']}% of Played Games Won")
+            level = f"Level {stats['br']['profile']['level']}"
         except KeyError:
-            embed.add_field(name=f"Win Ratio {ending}",
-                            value="Unavailable.")
-        embed.add_field(name=f"Average Survival Time {ending}",
-                        value=f"Alive for {stats['stats'][pmode]['avgTimePlayed']['displayValue']} on Average {ending}")
-        
+            level = "Level Not Avaliable"
+        embed = Embed(author=f"{stats['displayName']}'s Fortnite Statistics",
+                      title=f"{level} | {timemessage} played | {stats['br']['stats']['pc'][mode]['matchesPlayed']} matches | {stats['br']['stats']['pc'][mode]['kills']} kills",
+                      color=randint(0, 0xffffff))
+        embed.add_field(
+            name=f"{category} Wins",
+            value=f"{stats['br']['stats']['pc'][mode]['wins']} Wins")
+        embed.add_field(
+            name=f"{category} Kill / Death Ratio",
+            value=f"{stats['br']['stats']['pc'][mode]['kpd']} Kills per Death")
+        embed.add_field(
+            name=f"{category} Kills per Minute",
+            value=f"{stats['br']['stats']['pc'][mode]['kpm']} Kills per Minute")
+        embed.add_field(
+            name=f"{category} Win Rate",
+            value=f"{stats['br']['stats']['pc'][mode]['winRate']}% of Played Games Won")
+
+        if mode != 'all':
+            top = 'top10' if mode == 'solo' else 'top5' if mode == 'duo' else 'top3'
+            embed.add_field(
+                name=f"Number of Times in {top[:3].title()} {top[-2:]} in {category}",
+                value=f"{stats['br']['stats']['pc'][mode][top]}"
+            )
+        lastupdate = stats['lastUpdate'].split('T')
+        embed.set_footer(text=f"Last Updated on {lastupdate[0]} at {lastupdate[1]}")
+
         await ctx.send(embed=embed)
+
+    # old fortnite stats command that used fortnite tracker
+
+    # @commands.command(aliases=['fs'])
+    # async def fortnitestats(self, ctx, username, mode='total', platform='pc', seasonex='false'):
+    #     """Gets given user's Fortnite Battle Royale statistics.
+    #     Username: The player's username
+    #     Mode: Can either be total, solo, duo, or squads.
+    #     Platform: Can either be pc (Self Explanatory), xbl (Xbox), or psn (PlayStation).
+    #     seasonex: Season exclusive, if set to true will give the player's lifetime statistics.
+    #     Player's level only available for pc users. Not my fault."""
+
+    #     # Checks if given values are valid.
+    #     if mode not in ['total', 'solo', 'duo', 'squad'] or platform not in ['pc', 'xbl', 'psn'] or seasonex not in ['true', 'false']:
+    #         await ctx.send("Those aren't valid options. Use $help fortnitestats for more info.")
+    #         return
+
+    #     # Gets fortnite stats from tracker network.
+    #     # async with ClientSession() as session:
+    #     #     async with timeout(10):
+    #     #         async with session.get(f"https://api.fortnitetracker.com/v1/profile/{platform}/{username}", headers={'TRN-Api-Key': fs_api_key}) as resp:
+    #     #             if resp.status == 200:
+    #     #                 stats = await resp.json()
+    #     #             else:
+    #     #                 await ctx.send(f"**ERROR:** {resp.text} (That username might not be valid)")
+    #     #                 return
+    #     resp = get(f"https://api.fortnitetracker.com/v1/profile/{platform}/{username}", headers={'TRN-Api-Key': fs_api_key})
+    #     # if resp.status != 200:
+    #     #     await ctx.send(f"**ERROR:** {resp.text} (That username might not be valid)")
+    #     #     return
+    #     stats = resp.json()
+
+    #     if stats.get('error'):
+    #         await ctx.send(f"**ERROR:** {stats['error']}")
+    #         return
+
+    #     if mode == 'total':
+    #         embed = Embed(title=f"{stats['lifeTimeStats'][13]['value']} Played in Total | \
+    #                       {stats['lifeTimeStats'][7]['value']} Matches Played in Total. | \
+    #                       {stats['lifeTimeStats'][10]['value']} Total Kills.",
+    #                       color=randint(0, 0xffffff))
+    #         embed.set_author(name=f"{stats['epicUserHandle']}'s Fortnite Statistics")
+    #         embed.add_field(name="Total wins", value=f"{stats['lifeTimeStats'][8]['value']} wins")
+    #         embed.add_field(name="Total Kill / Death Ratio",
+    #                         value=f"{stats['lifeTimeStats'][11]['value']} Kills per Death")
+    #         embed.add_field(name="Total Win Rate",
+    #                         value=f"{stats['lifeTimeStats'][9]['value']} of Played Games Won")
+    #         embed.add_field(name="Total Average Survival Time",
+    #                         value=f"Alive for {stats['lifeTimeStats'][14]['value']} on Average.")
+    #         embed.add_field(name="Total Kills per Minute",
+    #                         value=f"{stats['lifeTimeStats'][12]['value']} Kills per Minute")
+            
+    #         await ctx.send(embed=embed)
+    #         return
+
+    #     seasonex = True if seasonex.lower() == 'true' else False
+
+    #     # p2 for solo, p9 for duo, and p10 for squads. I have no idea why it's like this.
+    #     pmode = 'p2' if mode == 'solo' else 'p9' if mode == 'duo' else 'p10'
+    #     pmode = 'curr_' + pmode if seasonex else pmode
+    #     # ending is just the ending of the messages
+    #     ending = 'in ' + mode.title()
+    #     ending += ' this Season' if seasonex else ''
+
+    #     embed = Embed(title=f"{stats['stats'][pmode]['top1']['displayValue']} Times Won {ending} | \
+    #                   {stats['stats'][pmode]['matches']['displayValue']} Played {ending} | \
+    #                   {stats['stats'][pmode]['kills']['displayValue']} Kills {ending}",
+    #                   color=randint(0, 0xffffff))
+    #     embed.set_author(name=f"{stats['epicUserHandle']}'s Fortnite Statistics {ending}")
+    #     embed.add_field(name=f"Kill / Death Ratio {ending}",
+    #                     value=f"{stats['stats'][pmode]['kd']['displayValue']} Kills per Death {ending}")
+    #     try:
+    #         embed.add_field(name=f"Win Ratio {ending}",
+    #                         value=f"{stats['stats'][pmode]['winRatio']['value']}% of Played Games Won")
+    #     except KeyError:
+    #         embed.add_field(name=f"Win Ratio {ending}",
+    #                         value="Unavailable.")
+    #     embed.add_field(name=f"Average Survival Time {ending}",
+    #                     value=f"Alive for {stats['stats'][pmode]['avgTimePlayed']['displayValue']} on Average {ending}")
+        
+    #     await ctx.send(embed=embed)
 
 
 def setup(lambdabot):

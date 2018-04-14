@@ -57,7 +57,8 @@ def main():
         print('-' * 20)
 
         await lambdabot.change_presence(game=Game(name=f"{command_prefix}help"))
-    
+
+    # Error handling    
     @lambdabot.event
     async def on_command_error(ctx, error):
         if isinstance(error, CommandNotFound):
@@ -65,6 +66,7 @@ def main():
             return
         await ctx.send(f"**ERROR:** {error}")
 
+    # Loading extensions (cogs)
     for extension in extensions:
         try:
             lambdabot.load_extension(extension)
