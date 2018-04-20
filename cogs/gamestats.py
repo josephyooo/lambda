@@ -1,4 +1,4 @@
-from datetime import timedelta
+from datetime import timedelta, datetime
 from random import randint
 
 from discord import Embed
@@ -125,8 +125,23 @@ class Gamestats:
                 name=f"Number of Times in {top[:3].title()} {top[-2:]} in {category}",
                 value=f"{stats['br']['stats']['pc'][mode][top]}"
             )
-        lastupdate = stats['lastUpdate'].split('T')
-        embed.set_footer(text=f"Last Updated on {lastupdate[0]} at {lastupdate[1]}")
+        lastupdate = stats['lastUpdate']
+        datedashsplit = lastupdate.split('-')
+        day = datedashsplit[2].split('T')[0]
+        time = datedashsplit[2].split('T')[1]
+        # Last update UTC+11 (Default time)
+        lastupdateplus11 = datetime(int(datedashsplit[0]),  # Year
+                                    int(datedashsplit[1]),  # Month
+                                    int(day),  # Day
+                                    int(time.split(':')[0]),  # Hour
+                                    int(time.split(':')[1]),  # Minute
+                                    int(time.split(':')[2].split('.')[0]),  # Second
+                                    int(time.split(':')[2].split('.')[1][:-1]))  # Microsecond
+        # Last update UTC-5 (Eastern Standard Time)
+        lastupdateeastern = lastupdateplus11 - timedelta(hours=16)
+        # from datetime class to str() to datetime split into date and time ([XXX-XX-XX, XX:XX:XX.XXXXXX])
+        lastupdateeastern = str(lastupdateeastern).split()
+        embed.set_footer(text=f"Last Updated on {lastupdateeastern[0]} at {lastupdateeastern[1]} EST")
 
         await ctx.send(embed=embed)
 
