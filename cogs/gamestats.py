@@ -75,13 +75,17 @@ class Gamestats:
             await ctx.send("Try entering a steam user id.")
 
     @commands.command(aliases=['fs'])
-    async def fortnitestats(self, ctx, username, mode="all"):
+    async def fortnitestats(self, ctx, username, mode="all", platform='pc'):
         """Sends back the given user's overall statistics.
         Level is the total level, not the season level.
-        Only PC is supported, dm me the user that isn't on pc that has linked their Epic Games acc to their platform."""
+        platform can either be "pc" or "ps4"
+        If someone's account is on xbox, message me their name and I'll add xbox"""
         mode = mode.lower()
         if mode not in ['solo', 'duo', 'squad', 'all']:
             await ctx.send(f"{mode} is not a valid mode. (All, Solo, Duo, or Squad)")
+            return
+        if platform not in ['pc', 'ps4']:
+            await ctx.send(f"{platform} is not a valid mode. (pc, ps4)")
             return
         username = username.replace(' ', '%20')
         async with ClientSession() as session:
@@ -92,38 +96,39 @@ class Gamestats:
                     else:
                         await ctx.send(f"**ERROR:** {resp.text} (That username might not be valid)")
                         return
+        print(stats)
         category = mode.title() if not mode == 'all' else 'Total'
         # playtime = str(timedelta(minutes=int(
-        #     stats['br']['stats']['pc'][mode]['minutesPlayed'])))[:-3].split(':')
+        #     stats['br']['stats'][platform][mode]['minutesPlayed'])))[:-3].split(':')
         # hours = (
         #     playtime[0] + " hours") if playtime[0] != '0' else ""
-        splittimedelta = str(timedelta(minutes=stats['br']['stats']['pc'][mode]['minutesPlayed'])).split(':')
+        splittimedelta = str(timedelta(minutes=stats['br']['stats'][platform][mode]['minutesPlayed'])).split(':')
         timemessage = f"{splittimedelta[0]} hours, {splittimedelta[1]} minutes and {splittimedelta[2]} seconds"
         try:
             level = f"Level {stats['br']['profile']['level']}"
         except KeyError:
             level = "Level Not Avaliable"
         embed = Embed(author=f"{stats['displayName']}'s Fortnite Statistics",
-                      title=f"{level} | {timemessage} played | {stats['br']['stats']['pc'][mode]['matchesPlayed']} matches | {stats['br']['stats']['pc'][mode]['kills']} kills",
+                      title=f"{level} | {timemessage} played | {stats['br']['stats'][platform][mode]['matchesPlayed']} matches | {stats['br']['stats'][platform][mode]['kills']} kills",
                       color=randint(0, 0xffffff))
         embed.add_field(
             name=f"{category} Wins",
-            value=f"{stats['br']['stats']['pc'][mode]['wins']} Wins")
+            value=f"{stats['br']['stats'][platform][mode]['wins']} Wins")
         embed.add_field(
             name=f"{category} Kill / Death Ratio",
-            value=f"{stats['br']['stats']['pc'][mode]['kpd']} Kills per Death")
+            value=f"{stats['br']['stats'][platform][mode]['kpd']} Kills per Death")
         embed.add_field(
             name=f"{category} Kills per Minute",
-            value=f"{stats['br']['stats']['pc'][mode]['kpm']} Kills per Minute")
+            value=f"{stats['br']['stats'][platform][mode]['kpm']} Kills per Minute")
         embed.add_field(
             name=f"{category} Win Rate",
-            value=f"{stats['br']['stats']['pc'][mode]['winRate']}% of Played Games Won")
+            value=f"{stats['br']['stats'][platform][mode]['winRate']}% of Played Games Won")
 
         if mode != 'all':
             top = 'top10' if mode == 'solo' else 'top5' if mode == 'duo' else 'top3'
             embed.add_field(
                 name=f"Number of Times in {top[:3].title()} {top[-2:]} in {category}",
-                value=f"{stats['br']['stats']['pc'][mode][top]}"
+                value=f"{stats['br']['stats'][platform][mode][top]}"
             )
         lastupdate = stats['lastUpdate']
         datedashsplit = lastupdate.split('-')
@@ -148,7 +153,7 @@ class Gamestats:
     # old fortnite stats command that used fortnite tracker
 
     # @commands.command(aliases=['fs'])
-    # async def fortnitestats(self, ctx, username, mode='total', platform='pc', seasonex='false'):
+    # async def fortnitestats(self, ctx, username, mode='total', platform=platform, seasonex='false'):
     #     """Gets given user's Fortnite Battle Royale statistics.
     #     Username: The player's username
     #     Mode: Can either be total, solo, duo, or squads.
@@ -157,7 +162,7 @@ class Gamestats:
     #     Player's level only available for pc users. Not my fault."""
 
     #     # Checks if given values are valid.
-    #     if mode not in ['total', 'solo', 'duo', 'squad'] or platform not in ['pc', 'xbl', 'psn'] or seasonex not in ['true', 'false']:
+    #     if mode not in ['total', 'solo', 'duo', 'squad'] or platform not in [platform, 'xbl', 'psn'] or seasonex not in ['true', 'false']:
     #         await ctx.send("Those aren't valid options. Use $help fortnitestats for more info.")
     #         return
 
