@@ -96,7 +96,7 @@ class Gamestats:
                     else:
                         await ctx.send(f"**ERROR:** {resp.text} (That username might not be valid)")
                         return
-        print(stats)
+        # print(stats)
         category = mode.title() if not mode == 'all' else 'Total'
         # playtime = str(timedelta(minutes=int(
         #     stats['br']['stats'][platform][mode]['minutesPlayed'])))[:-3].split(':')
