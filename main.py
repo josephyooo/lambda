@@ -30,7 +30,7 @@ extensions = (
     'cogs.translations'
 )
 
-# test
+
 def get_prefix(bot, message):
     prefixes = command_prefix
 
