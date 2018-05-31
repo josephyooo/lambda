@@ -55,7 +55,7 @@ def main():
         print(f'Version: {__version__}')
         print('-' * 20)
 
-        await lambdabot.change_presence(game=Game(name=f"{command_prefix}help"))
+        await lambdabot.change_presence(activity=Game(name=f"{command_prefix}help"))
 
     # Error handling    
     @lambdabot.event
