@@ -26,7 +26,7 @@ class Basic:
         await ctx.send(choice(("Heads", "Tails")))
 
     @commands.command(name='8ball', aliases=['eightball'])
-    async def ball(self, ctx, *question: str):
+    async def ball(self, ctx, *, question: str):
         """Will send a random response to a question."""
         # ctx.trigger_typing()
         # if question[-1][-1] != '?':
