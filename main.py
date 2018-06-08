@@ -47,6 +47,7 @@ def main():
 
     # Runs when the bot starts up. Right now, it's going to print the username,
     # userid, number of servers it's on, and number of user it's connected to
+
     @lambdabot.event
     async def on_ready():
         print(f'\nLogged in as {lambdabot.user.name} (ID: {lambdabot.user.id})')

@@ -14,12 +14,7 @@ class Meta:
     @commands.is_owner()
     async def test(self, ctx):
         """A test command. Only the bot's host can use this command."""
-        try:
-            await self.lambdabot.wait_for('reaction', timeout=5, check=lambda reaction: True)
-        except TimeoutError:
-            await ctx.send(':thumbsdown:')
-        else:
-            await ctx.send(':thumbsup:')
+        pass
 
     @commands.command(hidden=True)
     @commands.is_owner()
