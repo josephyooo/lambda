@@ -38,7 +38,7 @@ def get_prefix(bot, message):
     return commands.when_mentioned_or(*prefixes)(bot, message)
 
 
-lambdabot = commands.Bot(COMMAND_PREFIX=get_prefix)
+lambdabot = commands.Bot(command_prefix=get_prefix)
 
 
 def main():
