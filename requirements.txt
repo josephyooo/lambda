@@ -2,7 +2,7 @@ aiohttp==2.2.5
 async-timeout==3.0.0
 certifi==2018.4.16
 chardet==3.0.4
-discord.py==1.0.0a1467+g6b75179
+git+https://github.com/Rapptz/discord.py@rewrite#egg=discord.py[voice]
 idna==2.6
 multidict==4.3.1
 pyfiglet==0.7.5
