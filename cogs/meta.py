@@ -14,8 +14,13 @@ class Meta:
     @commands.is_owner()
     async def test(self, ctx):
         """A test command. Only the bot's host can use this command."""
+        await ctx.send("a")
+        def checka(reaction, something):
+            # print(reaction)
+            # print(something)
+            return True
         try:
-            await self.lambdabot.wait_for('reaction', timeout=5, check=lambda reaction: True)
+            await self.lambdabot.wait_for('reaction_add', timeout=5, check=checka)
         except TimeoutError:
             await ctx.send(':thumbsdown:')
         else:
@@ -107,6 +112,7 @@ class Meta:
     async def about(self, ctx):
         """Tells you information about the bot."""
         await ctx.send("***lambda bot*** was created by ***<@270611868131786762>*** as a bot that could do some things other bots couldn't.")
+        await ctx.send("***Invite link:*** <https://discordapp.com/oauth2/authorize?client_id=374892524780781579&scope=bot&permissions=2146958591>")
 
     # doesn't even work properly
     @commands.command()
