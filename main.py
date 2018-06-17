@@ -1,4 +1,4 @@
-from os.path import environ
+from os import environ
 from sys import exit
 
 from discord import __version__, Game
