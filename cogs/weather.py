@@ -6,7 +6,7 @@ from pyowm import OWM
 from pyowm.exceptions.not_found_error import NotFoundError
 
 
-OWN_API_KEY = environ['OWN_API_KEY']
+OWN_API_KEY = environ['OWM_API_KEY']
 
 
 class Weather:
