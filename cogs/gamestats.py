@@ -75,17 +75,19 @@ class Gamestats:
             await ctx.send("Try entering a steam user id.")
 
     @commands.command(aliases=['fs'])
-    async def fortnitestats(self, ctx, username, mode="all", platform='pc'):
+    async def fortnitestats(self, ctx, username, mode="all", platform=""):
         """Sends back the given user's overall statistics.
         Level is the total level, not the season level.
         platform can either be "pc" or "ps4"
         If someone's account is on xbox, message me their name and I'll add xbox"""
         mode = mode.lower()
+        if platform == 'xbox':
+            platform = "xb1"
         if mode not in ['solo', 'duo', 'squad', 'all']:
             await ctx.send(f"{mode} is not a valid mode. (All, Solo, Duo, or Squad)")
             return
-        if platform not in ['pc', 'ps4']:
-            await ctx.send(f"{platform} is not a valid mode. (pc, ps4)")
+        if platform not in ["pc", "ps4", "xbox", "xb1", ""]:
+            await ctx.send(f"{platform} is not a valid mode. (pc, ps4, xbox/xbl)")
             return
         username = username.replace(' ', '%20')
         async with ClientSession() as session:
@@ -96,7 +98,15 @@ class Gamestats:
                     else:
                         await ctx.send(f"**ERROR:** {resp.text} (That username might not be valid)")
                         return
-        # print(stats)
+        if platform == "":
+            if len(stats['br']['stats']) > 1:
+                await ctx.send(f"{list(stats['br']['stats'].keys())} are available for this user. Choose one.")
+                return
+            else:
+                platform = list(stats['br']['stats'].keys())[0]
+        if platform not in stats['br']['stats']:
+            await ctx.send(f"{platform} not available for this user. Modes {list(stats['br']['stats'].keys())} are available.")
+            return
         category = mode.title() if not mode == 'all' else 'Total'
         # playtime = str(timedelta(minutes=int(
         #     stats['br']['stats'][platform][mode]['minutesPlayed'])))[:-3].split(':')
@@ -108,8 +118,10 @@ class Gamestats:
             level = f"Level {stats['br']['profile']['level']}"
         except KeyError:
             level = "Level Not Avaliable"
+        # REMOVED LEVEL AND TIME UNTIL FURTHER NOTICE
+        # WAS PREVIOUSLY {level} | {timemessage} played
         embed = Embed(author=f"{stats['displayName']}'s Fortnite Statistics",
-                      title=f"{level} | {timemessage} played | {stats['br']['stats'][platform][mode]['matchesPlayed']} matches | {stats['br']['stats'][platform][mode]['kills']} kills",
+                      title=f"{stats['displayName']}'s Fortnite BR stats | {stats['br']['stats'][platform][mode]['matchesPlayed']} matches | {stats['br']['stats'][platform][mode]['kills']} kills",
                       color=randint(0, 0xffffff))
         embed.add_field(
             name=f"{category} Wins",
