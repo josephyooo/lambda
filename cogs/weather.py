@@ -1,9 +1,12 @@
+from os import environ
+
 from discord.ext import commands
 import discord
 from pyowm import OWM
 from pyowm.exceptions.not_found_error import NotFoundError
 
-from config.config import owm_api_key
+
+OWN_API_KEY = environ['OWN_API_KEY']
 
 
 class Weather:
@@ -15,7 +18,7 @@ class Weather:
     async def forecast(self, ctx, *, location: str=''):
         """Will send the given location's weather forecast using OpenWeatherMap."""
         try:
-            owm = OWM(owm_api_key)
+            owm = OWM(OWN_API_KEY)
     
             observation = owm.weather_at_place(location)
             weather = observation.get_weather()

@@ -1,4 +1,4 @@
-from os.path import isfile
+from os.path import environ
 from sys import exit
 
 from discord import __version__, Game
@@ -7,12 +7,10 @@ from discord.errors import LoginFailure
 from discord.ext.commands.errors import CommandNotFound
 
 
-if not isfile('config/config.py'):
-    input('PLEASE REREAD THE README.md @ https://github.com/Polokniko/lambda AGAIN\n')
-
 try:
-    from config.config import token, command_prefix
-    if command_prefix.replace(' ', '') == '':
+    TOKEN = environ['TOKEN']
+    COMMAND_PREFIX = environ['COMMAND_PREFIX']
+    if COMMAND_PREFIX.replace(' ', '') == '':
         print("You need something as your prefix.")
         exit()
 except Exception as e:
@@ -32,7 +30,7 @@ extensions = (
 
 
 def get_prefix(bot, message):
-    prefixes = command_prefix
+    prefixes = COMMAND_PREFIX
 
     if message.guild.id is None:
         return '!'
@@ -40,7 +38,7 @@ def get_prefix(bot, message):
     return commands.when_mentioned_or(*prefixes)(bot, message)
 
 
-lambdabot = commands.Bot(command_prefix=get_prefix)
+lambdabot = commands.Bot(COMMAND_PREFIX=get_prefix)
 
 
 def main():
@@ -56,13 +54,13 @@ def main():
         print(f'Version: {__version__}')
         print('-' * 20)
 
-        await lambdabot.change_presence(activity=Game(name=f"{command_prefix}help"))
+        await lambdabot.change_presence(activity=Game(name=f"{COMMAND_PREFIX}help"))
 
     # Error handling    
     @lambdabot.event
     async def on_command_error(ctx, error):
         if isinstance(error, CommandNotFound):
-            await ctx.send(f"That isn't a command. Use `{command_prefix}help` to view full list of commands.")
+            await ctx.send(f"That isn't a command. Use `{COMMAND_PREFIX}help` to view full list of commands.")
             return
         await ctx.send(f"**ERROR:** {error}")
 
@@ -76,7 +74,7 @@ def main():
             print(f'Successfully loaded extension: {extension}')
 
     try:
-        lambdabot.run(token)
+        lambdabot.run(TOKEN)
     except LoginFailure as e:
         print(e)
         print('Are you sure your token is correct?')

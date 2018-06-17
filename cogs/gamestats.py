@@ -1,5 +1,6 @@
 from datetime import timedelta, datetime
 from random import randint
+from os import environ
 
 from discord import Embed
 from discord.ext import commands
@@ -8,7 +9,8 @@ from requests import get
 from aiohttp import ClientSession
 from async_timeout import timeout
 
-from config.config import fs_api_key, steam_api_key
+FS_API_KEY = environ['FS_API_KEY']
+STEAM_API_KEY = environ['STEAM_API_KEY']
 
 
 class Gamestats:
@@ -30,9 +32,9 @@ class Gamestats:
             if isid:
                 try:
                     player_summary = get(
-                        f'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={steam_api_key}&steamids={id}').json()['response$']['players']
+                        f'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key={STEAM_API_KEY}&steamids={id}').json()['response$']['players']
                     stats = get(
-                        f'http://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v0002/?appid=730&key={steam_api_key}&steamid={id}').json()['playerstats']['stats']
+                        f'http://api.steampowered.com/ISteamUserStats/GetUserStatsForGame/v0002/?appid=730&key={STEAM_API_KEY}&steamid={id}').json()['playerstats']['stats']
                     player_summary = player_summary[0]
                 except KeyError:
                     try:
@@ -92,7 +94,7 @@ class Gamestats:
         username = username.replace(' ', '%20')
         async with ClientSession() as session:
             async with timeout(10):
-                async with session.get(f"https://fortnite.y3n.co/v2/player/{username}", headers={"X-Key": fs_api_key}) as resp:
+                async with session.get(f"https://fortnite.y3n.co/v2/player/{username}", headers={"X-Key": FS_API_KEY}) as resp:
                     if resp.status == 200:
                         stats = await resp.json()
                     else:
@@ -181,13 +183,13 @@ class Gamestats:
     #     # Gets fortnite stats from tracker network.
     #     # async with ClientSession() as session:
     #     #     async with timeout(10):
-    #     #         async with session.get(f"https://api.fortnitetracker.com/v1/profile/{platform}/{username}", headers={'TRN-Api-Key': fs_api_key}) as resp:
+    #     #         async with session.get(f"https://api.fortnitetracker.com/v1/profile/{platform}/{username}", headers={'TRN-Api-Key': FS_API_KEY}) as resp:
     #     #             if resp.status == 200:
     #     #                 stats = await resp.json()
     #     #             else:
     #     #                 await ctx.send(f"**ERROR:** {resp.text} (That username might not be valid)")
     #     #                 return
-    #     resp = get(f"https://api.fortnitetracker.com/v1/profile/{platform}/{username}", headers={'TRN-Api-Key': fs_api_key})
+    #     resp = get(f"https://api.fortnitetracker.com/v1/profile/{platform}/{username}", headers={'TRN-Api-Key': FS_API_KEY})
     #     # if resp.status != 200:
     #     #     await ctx.send(f"**ERROR:** {resp.text} (That username might not be valid)")
     #     #     return

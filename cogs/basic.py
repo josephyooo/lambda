@@ -1,4 +1,4 @@
-from os import remove
+from os import remove, environ
 from time import perf_counter
 from random import randint, choice
 from datetime import timedelta
@@ -10,8 +10,11 @@ from googleapiclient.discovery import build
 from urllib.parse import quote
 from bs4 import BeautifulSoup
 
-from config.config import cse_api_key, cse_id
 from config.phrases import eightballphrases
+
+
+CSE_API_KEY = environ['CSE_API_KEY']
+CSE_ID = environ['CSE_ID']
 
 
 class Basic:
