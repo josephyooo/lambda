@@ -95,10 +95,10 @@ class Gamestats:
         async with ClientSession() as session:
             async with timeout(10):
                 async with session.get(f"https://fortnite.y3n.co/v2/player/{username}", headers={"X-Key": FS_API_KEY}) as resp:
-                    if resp.status_code == 200:
+                    if resp.status == 200:
                         stats = await resp.json()
                     else:
-                        await ctx.send(f"**ERROR:** {str(resp.status_code)} - {resp.reason} (That username might not be valid)")
+                        await ctx.send(f"**ERROR:** {str(resp.status)} - {resp.reason} (That username might not be valid)")
                         return
         if platform == "":
             if len(stats['br']['stats']) > 1:
