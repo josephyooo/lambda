@@ -94,7 +94,7 @@ class Gamestats:
         username = username.replace(' ', '%20')
         async with ClientSession() as session:
             async with timeout(10):
-                async with session.get(f"https://fortnite.y3n.co/v2/player/{username}", headers={"X-Key": fs_api_key}) as resp:
+                async with session.get(f"https://fortnite.y3n.co/v2/player/{username}", headers={"X-Key": FS_API_KEY}) as resp:
                     if resp.status_code == 200:
                         stats = await resp.json()
                     else:
