@@ -5,7 +5,7 @@ cachetools==2.1.0
 certifi==2018.1.18
 cffi==1.11.5
 chardet==3.0.4
-discord.py==1.0.0a1473+g607771c
+git+https://github.com/Rapptz/discord.py@rewrite#egg=discord.py[voice]
 google-api-python-client==1.7.3
 google-auth==1.5.0
 google-auth-httplib2==0.0.3
