@@ -1,5 +1,6 @@
 from os import environ
 from sys import exit
+from traceback import format_exc
 
 from discord import __version__, Game
 from discord.ext import commands
@@ -62,7 +63,7 @@ def main():
         if isinstance(error, CommandNotFound):
             await ctx.send(f"That isn't a command. Use `{COMMAND_PREFIX}help` to view full list of commands.")
             return
-        await ctx.send(f"**ERROR:** {error}")
+        await ctx.send(f"**ERROR:** {format_exc()}")
 
     # Loading extensions (cogs)
     for extension in extensions:
