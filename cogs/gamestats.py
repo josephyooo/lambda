@@ -93,10 +93,10 @@ class Gamestats:
         async with ClientSession() as session:
             async with timeout(10):
                 async with session.get(f"https://fortnite.y3n.co/v2/player/{username}", headers={"X-Key": fs_api_key}) as resp:
-                    if resp.status == 200:
+                    if resp.status_code == 200:
                         stats = await resp.json()
                     else:
-                        await ctx.send(f"**ERROR:** {resp.text} (That username might not be valid)")
+                        await ctx.send(f"**ERROR:** {str(resp.status_code)} - {resp.reason} (That username might not be valid)")
                         return
         if platform == "":
             if len(stats['br']['stats']) > 1:
@@ -112,12 +112,12 @@ class Gamestats:
         #     stats['br']['stats'][platform][mode]['minutesPlayed'])))[:-3].split(':')
         # hours = (
         #     playtime[0] + " hours") if playtime[0] != '0' else ""
-        splittimedelta = str(timedelta(minutes=stats['br']['stats'][platform][mode]['minutesPlayed'])).split(':')
-        timemessage = f"{splittimedelta[0]} hours, {splittimedelta[1]} minutes and {splittimedelta[2]} seconds"
-        try:
-            level = f"Level {stats['br']['profile']['level']}"
-        except KeyError:
-            level = "Level Not Avaliable"
+        # splittimedelta = str(timedelta(minutes=stats['br']['stats'][platform][mode]['minutesPlayed'])).split(':')
+        # timemessage = f"{splittimedelta[0]} hours, {splittimedelta[1]} minutes and {splittimedelta[2]} seconds"
+        # try:
+        #     level = f"Level {stats['br']['profile']['level']}"
+        # except KeyError:
+        #     level = "Level Not Avaliable"
         # REMOVED LEVEL AND TIME UNTIL FURTHER NOTICE
         # WAS PREVIOUSLY {level} | {timemessage} played
         embed = Embed(author=f"{stats['displayName']}'s Fortnite Statistics",
