@@ -130,6 +130,9 @@ class Gamestats:
             name=f"{category} Kill / Death Ratio",
             value=f"{stats['br']['stats'][platform][mode]['kpd']} Kills per Death")
         embed.add_field(
+            name=f"{category} Kill / Match Ratio",
+            value=f"{stats['br']['stats'][platform][mode]['kpm']} Kills per Match")
+        embed.add_field(
             name=f"{category} Kills per Minute",
             value=f"{stats['br']['stats'][platform][mode]['kpm']} Kills per Minute")
         embed.add_field(
